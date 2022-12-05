@@ -2,8 +2,9 @@
   "name": "sliding-puzzle",
   "version": "1.0.0",
   "description": "The famous sliding puzzle game but on steroids. Info: https://en.wikipedia.org/wiki/Sliding_puzzle <br>\r You can play the game single-player or multiplayer with a friend with whom you will race.",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
+    "start": "node src/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -15,5 +16,12 @@
   "bugs": {
     "url": "https://github.com/boqnd/sliding-puzzle/issues"
   },
-  "homepage": "https://github.com/boqnd/sliding-puzzle#readme"
+  "homepage": "https://github.com/boqnd/sliding-puzzle#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "http-errors": "^2.0.0",
+    "nocache": "^3.0.4"
+  },
+  "type": "module"
 }
