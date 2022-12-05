@@ -7,7 +7,7 @@ async function start() {
   // TODO: Get port from config
   const port = process.env.PORT || 3000;
 
-  app.express.listen(port, err => {
+  app.express.listen(port, (err) => {
     if (err) {
       return console.log(err);
     }
@@ -22,7 +22,7 @@ async function shutdown() {
   process.exit();
 }
 
-process.on('unhandledRejection', reason => {
+process.on('unhandledRejection', (reason) => {
   console.error(reason.toString());
 });
 
