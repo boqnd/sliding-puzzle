@@ -6,7 +6,6 @@ const router = Router();
 
 router.use(cors());
 
-
 // TODO: Implement
 // router.use(authenticate);
 
