@@ -9,5 +9,9 @@
     "es2021": true,
     "node": true
   },
-  "rules": {}
+  "rules": {
+    "indent": ["error", 2],
+    "quotes": ["error", "single"],
+    "semi": ["error", "always"]
+  }
 }
