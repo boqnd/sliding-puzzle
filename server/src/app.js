@@ -2,6 +2,9 @@ import nocache from 'nocache';
 import express from 'express';
 import routes from './routes/index.js';
 import handleError from './middlewares/errorHandler.js';
+import Knex from 'knex';
+import { Model } from 'objection';
+import config from '../knexfile.js';
 
 export default class App {
   express;
@@ -19,7 +22,8 @@ export default class App {
 
   async init() {
     console.log('Initializing application');
-    // TODO: Initialize database
+    const knexClient = Knex(config.development);
+    Model.knex(knexClient);
   }
 
   async exit() {
