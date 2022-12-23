@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /**
  * THIS IS AN EXAMPLE MIGRATION
  */

@@ -1,5 +1,6 @@
 import { errorFormattingService } from '../services/errorFormattingService.js';
 
+// eslint-disable-next-line no-unused-vars
 export default function handleError(err, req, res, next) {
   res.status(err.status || 500);
 

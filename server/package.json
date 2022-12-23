@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "echo \"Error: no test specified\" && exit 0",
     "format:check": "prettier --check .",
     "format:write": "prettier --write .",
     "lint:check": "eslint .",
@@ -16,7 +16,8 @@
     "db:down": "knex migrate:rollback",
     "db:reset": "knex migrate:rollback && knex migrate:latest",
     "db:make": "knex migrate:make",
-    "db:create": "node src/lib/db/create-database.js"
+    "db:create": "node src/lib/db/create-database.js",
+    "prepare": "cd .. && husky install ./server/.husky"
   },
   "repository": {
     "type": "git",
@@ -44,6 +45,10 @@
   },
   "type": "module",
   "devDependencies": {
-    "eslint": "^8.29.0"
+    "eslint": "^8.29.0",
+    "eslint-config-prettier": "^8.5.0",
+    "husky": "^8.0.2",
+    "nodemon": "^2.0.20",
+    "prettier": "^2.8.0"
   }
 }
