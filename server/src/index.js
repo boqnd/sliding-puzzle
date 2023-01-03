@@ -1,11 +1,11 @@
 import App from './app.js';
+import { convictConfig } from '../config.js';
 
 const app = new App();
 
 async function start() {
   await app.init();
-  // TODO: Get port from config
-  const port = process.env.PORT || 3000;
+  const port = convictConfig.get('server.port');
 
   app.express.listen(port, (err) => {
     if (err) {

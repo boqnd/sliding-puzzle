@@ -11,6 +11,12 @@
     "format:write": "prettier --write .",
     "lint:check": "eslint .",
     "lint:fix": "eslint --fix .",
+    "knex": "knex --knexfile knexfile.js",
+    "db:up": "knex migrate:latest",
+    "db:down": "knex migrate:rollback",
+    "db:reset": "knex migrate:rollback && knex migrate:latest",
+    "db:make": "knex migrate:make",
+    "db:create": "node src/lib/db/create-database.js",
     "prepare": "cd .. && husky install ./server/.husky"
   },
   "repository": {
@@ -24,10 +30,18 @@
   },
   "homepage": "https://github.com/boqnd/sliding-puzzle#readme",
   "dependencies": {
+    "convict": "^6.2.3",
     "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "eslint-config-prettier": "^8.5.0",
     "express": "^4.18.2",
     "http-errors": "^2.0.0",
-    "nocache": "^3.0.4"
+    "knex": "^2.3.0",
+    "nocache": "^3.0.4",
+    "nodemon": "^2.0.20",
+    "objection": "^3.0.1",
+    "pg": "^8.8.0",
+    "prettier": "^2.8.0"
   },
   "type": "module",
   "devDependencies": {
