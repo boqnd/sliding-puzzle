@@ -1,13 +1,13 @@
 import cors from 'cors';
 import { Router } from 'express';
 import notFound from './notFound.js';
+import authenticate from './authenticate.js';
 
 const router = Router();
 
 router.use(cors());
 
-// TODO: Implement
-// router.use(authenticate);
+router.use('/auth', authenticate);
 
 // TODO: Add routes
 
