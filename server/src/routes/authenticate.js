@@ -1,21 +1,17 @@
+import session from 'express-session';
+import passport from 'passport';
+import GoogleStrategy from 'passport-google-oauth';
 import { Router } from 'express';
-const router = Router();
 import isLoggedIn from '../middlewares/isLoggedIn.js';
 
-//
-import session from 'express-session';
+let userProfile;
+const router = Router();
 
 router.use(session({
   resave: false,
   saveUninitialized: true,
   secret: 'SECRET'
 }));
-//
-
-//
-import passport from 'passport';
-var userProfile;
-
 router.use(passport.initialize());
 router.use(passport.session());
 
@@ -41,7 +37,7 @@ passport.deserializeUser(function(obj, cb) {
 //
 
 //
-import GoogleStrategy from 'passport-google-oauth';
+// TODO: use env
 const GOOGLE_CLIENT_ID = '384846276379-ih4ucc8boll6b829up2vcrsiaolvirc2.apps.googleusercontent.com';
 const GOOGLE_CLIENT_SECRET = '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';
 
