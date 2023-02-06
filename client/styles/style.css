@@ -1,0 +1,93 @@
+body {
+  font-size: 24px;
+  padding: 0;
+  margin: 0;
+  font-family: 'Roboto Condensed', sans-serif;
+  font-weight: 700;
+  background-color: #eeeff7;
+}
+
+#username {
+  font-size: 16px;
+  padding: 0;
+  margin: 0;
+}
+
+.sign-out-btn {
+  position: relative;
+  margin-top: 15px;
+  margin-left: 15px;
+  width: 150px;
+  height: 30px;
+  border: none;
+  border-radius: 10px;
+  background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(44,62,80,1) 100%);
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.sliding-puzzle-figure {
+  display: flex;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.vertical-line {
+  border-left: 6px solid black;
+  height: 100%;
+  margin-left: 50%;
+}
+
+.sign-out-btn:hover {
+  background: radial-gradient(circle, rgb(1, 39, 228) 0%, rgba(44,62,80,1) 100%);
+}
+
+
+.timer{
+  margin: 0 75px 0 75px;
+  display: flex;
+  flex-direction: column;
+}
+
+.timer .ranking{
+  cursor: pointer;
+  height: 35px;
+  width: 100px;
+  align-self: center;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(44,62,80,1) 100%);
+}
+.timer .ranking:hover{
+  background: radial-gradient(circle, rgb(1, 39, 228) 0%, rgba(44,62,80,1) 100%);
+
+}
+
+.chat-box {
+  position: absolute;
+  top: 89%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.chat {
+  border: 2px solid black;
+  width: 500px;
+  height: 150px;
+}
+
+@media only screen and (max-width: 650px) {
+  body {
+    font-size: 22px;
+  }
+  .sign-out-btn {
+    width: 90px;
+  }
+}
+
