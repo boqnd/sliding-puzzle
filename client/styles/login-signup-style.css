@@ -1,0 +1,152 @@
+*{
+    font-family: 'Roboto Condensed', sans-serif;
+}
+
+body{
+    font-size: 16px;
+    padding: 0;
+    margin: 0;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(44,62,80,1) 100%);
+}
+
+.form-wrapper{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.form-wrapper .modal {
+    max-width: 32rem;
+    width: 90%;
+    padding: 2.5rem;
+    display: flex;
+    justify-content: center;
+    align-self:center;
+    flex-direction: column;
+    background-color: #FFFFFF;
+    border-radius: 8px;
+    display: none;
+}
+
+.form-wrapper .modal.active {
+    display: block !important;
+}
+
+.form-title{
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+}
+.action{
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 50px;;
+    color: #848694;
+}
+
+.input{
+    display: flex;
+    flex-direction: column-reverse;
+    position: relative;
+    padding-top: 10px;  
+    margin-top: 10px;
+}
+
+.input-label{
+    color: #848694;
+    position: absolute;
+    top: 20px;
+}
+
+.input-field{
+    border: 0;
+    padding: 0;
+    z-index: 1;
+    background-color: transparent;
+    border-bottom: 2px solid rgb(175, 175, 175);
+    font: inherit;
+    font-size: 14px;
+    line-height: 30px;
+}
+
+.input-field:focus + .input-label {
+    transform: translateY(-25px);
+}
+
+input:not(:placeholder-shown) + .input-label {
+    transform: translateY(-25px);
+}
+
+.input-field:focus{
+    outline: none;
+    border-bottom-color: #4D5CDC;;
+}
+
+.button-wrapper{
+    display: flex;
+    justify-content: flex-start;
+}
+
+.form-submit{
+    margin-top: 50px;
+    margin-bottom: 10px;
+    width: 40%;
+    height: 30px;
+    font-size: 16px;
+    border-radius: 28px;
+    background-color: #54BDD6;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.form-submit:hover{
+    background-color: rgb(44, 224, 44);
+}
+
+.switch{
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.switch:hover{
+    color: #54BDD6;
+}
+
+.create-link{
+    display: flex;
+    flex-direction: row-reverse;
+    padding-right: 5%;
+    margin-top: 20px;
+}
+
+.create-link a{
+    text-decoration: none;
+}
+
+.create-link a:hover{
+    color: #54BDD6;
+}
+
+.error{
+    color: red;
+}
+
+@media screen and (max-width: 890px) {
+    .form-wrapper{
+        max-width: 17rem;
+    }
+    .create-link{
+        padding-right: 10%;
+    }
+    .form-wrapper {
+        transform: translate(-60%, -50%);   
+    }
+}
