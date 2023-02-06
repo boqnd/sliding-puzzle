@@ -72,15 +72,15 @@ class GameBoard extends HTMLElement{
         // Deciding the level
         if(level[0].checked) {
             this.size = 3;
-            this.baseDistance = 33;
+            this.baseDistance = 153;
         }
         else if(level[1].checked) {
             this.size = 4;
-            this.baseDistance = 25;
+            this.baseDistance = 116;
         }
         else if(level[2].checked) {
             this.size = 5;
-            this.baseDistance = 20;
+            this.baseDistance = 93;
         }
         // Loading the game
         this.loadGame();
