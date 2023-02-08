@@ -13,7 +13,7 @@ const convictConfig = convict({
     password: {
       doc: 'DB Password',
       env: 'DB_PASSWORD',
-      default: 'postres',
+      default: 'postgres',
     },
     database: {
       doc: 'DB database name',
