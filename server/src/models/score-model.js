@@ -8,8 +8,7 @@ export class ScoreModel extends BaseModel {
 
   size;
   gameId;
-  scoreP1;
-  scoreP2;
+  score;
 
   game;
   winner;

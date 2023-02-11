@@ -5,8 +5,7 @@ class ScoreService {
     return await ScoreModel.query().insertAndFetch({
       size: score.size,
       gameId: score.gameId,
-      scoreP1: score.scoreP1,
-      scoreP2: score.scoreP2,
+      score: score.score,
     });
   }
 
@@ -23,8 +22,7 @@ class ScoreService {
       .patchAndFetchById(id, {
         size: score.size,
         gameId: score.gameId,
-        scoreP1: score.scoreP1,
-        scoreP2: score.scoreP2,
+        score: score.score,
       })
       .throwIfNotFound();
   }

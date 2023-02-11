@@ -26,9 +26,8 @@ export async function up(knex) {
   await knex.schema.createTable('scores', (table) => {
     table.increments('id').primary().unique();
     table.integer('size').notNullable();
+    table.integer('score').notNullable();
     table.integer('game_id').notNullable().references('id').inTable('games');
-    table.integer('score_p1').notNullable();
-    table.integer('score_p2').notNullable();
     table.integer('winner').notNullable().references('id').inTable('users');
 
     table.timestamp('created_at').notNullable().defaultTo(knex.fn.now());
