@@ -13,20 +13,23 @@ body {
   margin: 0;
 }
 
+.btn {
+  cursor: pointer;
+  border: none;
+  border-radius: 10px;
+  color: white;
+  font-weight: bold;
+  background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(44,62,80,1) 100%);
+}
 .sign-out-btn {
   position: relative;
   margin-top: 15px;
   margin-left: 15px;
   width: 150px;
   height: 30px;
-  border: none;
-  border-radius: 10px;
-  background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(44,62,80,1) 100%);
-  color: white;
-  font-weight: bold;
   font-size: 16px;
-  cursor: pointer;
 }
+
 
 .sliding-puzzle-figure {
   display: flex;
@@ -42,7 +45,7 @@ body {
   margin-left: 50%;
 }
 
-.sign-out-btn:hover {
+.btn:hover {
   background: radial-gradient(circle, rgb(1, 39, 228) 0%, rgba(44,62,80,1) 100%);
 }
 
@@ -54,21 +57,10 @@ body {
 }
 
 .timer .ranking{
-  cursor: pointer;
   height: 35px;
   width: 100px;
   align-self: center;
-  border: none;
-  border-radius: 10px;
-  color: white;
-  font-weight: bold;
-  background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(44,62,80,1) 100%);
 }
-.timer .ranking:hover{
-  background: radial-gradient(circle, rgb(1, 39, 228) 0%, rgba(44,62,80,1) 100%);
-
-}
-
 .chat-box {
   position: absolute;
   top: 89%;
@@ -79,8 +71,71 @@ body {
 .chat {
   border: 2px solid black;
   width: 500px;
-  height: 150px;
+  height: 170px;
 }
+
+.message-wrapper {
+  width: 98%;
+  height: 67%;
+  overflow: auto;
+  font-size: 12px;
+  padding: 5px;
+}
+
+.bottomNavigation{
+    margin-top: 7px;
+    display: flex;
+    justify-content: center;
+}
+
+.bottomNavigation > input {
+  padding: 5px;
+  width: 60%;
+  border: none;
+  border-bottom: 3px solid #3D5AE8;
+  font-size: 20px;
+  font-weight: 550;
+  margin-right: 10px;
+}
+
+.bottomNavigation > input:focus {
+  outline: none;
+  border-bottom: 3px solid #2D3F57;
+}
+
+.send-message-btn {
+  padding: 0px 8px 0 8px;
+}
+
+.messageContainer{
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+}
+
+.left{
+    justify-content: flex-start;
+}
+
+.foreign{
+    background-color: rgb(255, 71, 71) !important;
+}
+
+.message{
+    width: 40%;
+    background-color: rgb(117, 250, 161);
+}
+
+.messageInfo{
+    display: flex;
+    justify-content: space-between;
+    padding: 0px 10px;
+}
+
+.textContainer{
+    padding: 0px 10px;
+}
+
 
 @media only screen and (max-width: 650px) {
   body {
@@ -89,5 +144,3 @@ body {
   .sign-out-btn {
     width: 90px;
   }
-}
-
