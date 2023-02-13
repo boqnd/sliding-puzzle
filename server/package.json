@@ -38,13 +38,15 @@
     "express-session": "^1.17.3",
     "http-errors": "^2.0.0",
     "knex": "^2.3.0",
+    "moment": "^2.29.4",
     "nocache": "^3.0.4",
     "nodemon": "^2.0.20",
     "objection": "^3.0.1",
     "passport": "^0.6.0",
     "passport-google-oauth": "^2.0.0",
     "pg": "^8.8.0",
-    "prettier": "^2.8.0"
+    "prettier": "^2.8.0",
+    "socket.io": "^4.6.0"
   },
   "type": "module",
   "devDependencies": {

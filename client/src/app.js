@@ -1,4 +1,5 @@
 import './common/styles/style.css';
+import { Timer } from './services/timer.service.js';
 import { GameBoard } from './components/game-board/game-board.js';
 import { LoginComponent } from './components/auth/auth.js';
 
@@ -65,7 +66,46 @@ export default class AppComponent extends HTMLElement {
     const template = document.createElement('template');
     template.innerHTML = templateString;
     this.#_shadowRoot.appendChild(template.content);
+  };
+
+  listenForGame = () => {
+    const mutationCallback = (mutationsList) => {
+        const tensEl = this.#_shadowRoot.getElementById("tens");
+        const secondsEl = this.#_shadowRoot.getElementById("seconds");
+        const minuetsEl = this.#_shadowRoot.getElementById("minuets");
+        const hoursEl = this.#_shadowRoot.getElementById("hours");
+        const timer = new Timer(tensEl, secondsEl, minuetsEl, hoursEl);
+        for (const mutation of mutationsList) {
+            if ( mutation.type !== "attributes" || mutation.attributeName !== "isready" ) {
+                return;
+            }
+            if (mutation.target.getAttribute("isready") === "true") {
+                console.log(timer.resetTimer());
+                console.log(timer.startTimer());
+            } else if (mutation.target.getAttribute("isready") === "false") {
+                console.log(timer.stopTimer());
+            }
+        }
+    }
+    
+    const observer = new MutationObserver(mutationCallback);
+    const element = this.#_shadowRoot.getElementById("playerA");
+
+    if(!element) {
+        // console.log(this.#_shadowRoot.getElementById("playerA"));
+        window.setTimeout(this.listenForGame, 1000);
+        // console.log(this.#_shadowRootument.getElementById("playerA"));
+
+        return;
+    }
+
+    observer.observe(this.#_shadowRoot.getElementById("playerA"), { attributes: true });
   }
+
+  connectedCallback() {
+    this.listenForGame();
+  }
+
 }
 
 customElements.define('app-root', AppComponent);
