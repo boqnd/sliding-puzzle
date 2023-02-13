@@ -1,17 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sliding puzzle</title>
 
-    <link rel="stylesheet" href="../styles/ranking-style.css">
-    <script src="../scripts/ranking.js" type="module"></script>
-    
-</head>
-<body>
-    <div class="heading">
+import './style.css'
+
+const templateString = `
+    <style>
+        @import "main.css";
+    </style>
+<div class="heading">
         <div class="signout-btn-wrapper">
             <button class="btn sign-out-btn">Sign out</button> 
             <span id="username"></span>
@@ -42,5 +36,19 @@
             </ul>
         </div>
     </main>
-</body>
-</html>
+    `;
+
+class RankingComponent extends HTMLElement {
+    #_shadowRoot = null;
+
+    constructor() {
+        super();
+        this.#_shadowRoot = this.attachShadow({mode: 'open'});
+        const template = document.createElement('template');
+        template.innerHTML = templateString;
+        this.#_shadowRoot.appendChild(template.content);
+    }
+    
+}
+
+customElements.define("ranking-component", RankingComponent);

@@ -1,17 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sliding puzzle</title>
+import './style.css'
 
-    <link rel="stylesheet" href="../styles/login-signup-style.css">
-    <script src="../scripts/auth.js" type="module"></script>
-</head>
-<body>
-
-    <main class="form-wrapper">
+const templateString = `
+    <style>
+        @import "main.css";
+    </style>
+<main class="form-wrapper">
         <div class="modal active">
             <h1 class="form-title">Sliding Puzzle Game</h1>
             <p class="action">Sign in</p>
@@ -54,7 +47,19 @@
             </form>
             <div>Got an account? <a class="switch">Sign in</a></div>
         </div>
-    </main>
-    
-</body>
-</html>
+    </main>`
+
+class LoginComponent extends HTMLElement {
+    #_shadowRoot = null;
+
+    constructor() {
+        super();
+        this.#_shadowRoot = this.attachShadow({mode: 'open'});
+        const template = document.createElement('template');
+        template.innerHTML = templateString;
+        this.#_shadowRoot.appendChild(template.content.cloneNode(true));
+    }
+
+}
+
+customElements.define("app-login", LoginComponent);
