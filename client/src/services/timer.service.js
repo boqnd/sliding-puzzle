@@ -5,7 +5,6 @@ export class Timer {
     secondsEl;
     minuetsEl;
     hoursEl;
-    interval;
 
     constructor(
         tensEl,
@@ -13,7 +12,7 @@ export class Timer {
         minuetsEl,
         hoursEl
     ) {
-        this.isRunning = false;
+        this.interval = null;
         this.tens = 0;
         this.seconds = 0;
         this.minuets = 0;
@@ -60,17 +59,11 @@ export class Timer {
     }
 
     startTimer() {
-        if (!this.isRunning) {
-            this.isRunning = true;
-            this.interval = setInterval(this.start.bind(this), 10);
-        }
+        this.interval = setInterval(() => this.start(), 10);
     }
 
     stopTimer() {
-        if (this.isRunning) {
-            clearInterval(this.interval);
-            this.isRunning = false;
-        }
+        clearInterval(this.interval);
     }
 
     resetTimer() {
