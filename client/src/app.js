@@ -1,4 +1,6 @@
 import './common/styles/style.css';
+import moment from 'moment';
+import { SocketService } from './services/socket.service.js'
 import { Timer } from './services/timer.service.js';
 import { GameBoard } from './components/game-board/game-board.js';
 import { LoginComponent } from './components/auth/auth.js';
@@ -6,7 +8,7 @@ import { LoginComponent } from './components/auth/auth.js';
 export default class AppComponent extends HTMLElement {
   #_shadowRoot = null;
 
-  constructor() {
+  constructor(socketSevice) {
     super();
     this.#_shadowRoot = this.attachShadow({ mode: 'open' });
 
@@ -31,28 +33,7 @@ export default class AppComponent extends HTMLElement {
         <label for="chat-box">Chat:</label>
         <div class="chat">
                 <div class="message-wrapper">
-                    <div class="messageContainer left">
-                        <div class="message foreign">
-                            <div class="messageInfo">
-                                <p class="username">Jake</p>
-                                <p class="date">03.12.22 18:13</p>
-                            </div>
-                            <div class="textContainer">
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Est blanditiis maiores voluptatum ducimus veniam asperiores distinctio porro quam numquam eos?</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="messageContainer">
-                        <div class="message">
-                            <div class="messageInfo">
-                                <p class="username">Jack</p>
-                                <p class="date">03.12.22 18:14</p>
-                            </div>
-                            <div class="textContainer">
-                                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Est blanditiis maiores voluptatum ducimus veniam asperiores distinctio porro quam numquam eos?</p>
-                            </div>
-                        </div>
-                    </div>
+                    
                 </div>
 
                 <div class="bottomNavigation">
@@ -71,6 +52,8 @@ export default class AppComponent extends HTMLElement {
     const minuetsEl = this.#_shadowRoot.getElementById("minuets");
     const hoursEl = this.#_shadowRoot.getElementById("hours");
     this.timer = new Timer(tensEl, secondsEl, minuetsEl, hoursEl);
+    this.socketService = socketSevice;
+    this.userId = -1;
   };
 
 
@@ -101,13 +84,77 @@ export default class AppComponent extends HTMLElement {
     observer.observe(this.#_shadowRoot.getElementById("playerA"), { attributes: true });
   }
 
+  sendMessageInChat = (input) => {
+    if(input.value.trim() === '') {
+        return;
+      }
+    
+      this.socketService.emitMessage(input.value);
+      input.value = '';
+  }
+
+  listenForChatMessage = () => {
+    const input = this.#_shadowRoot.getElementById('input')
+    this.#_shadowRoot.getElementById('send').addEventListener('click', () => this.sendMessageInChat(input));
+
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            this.sendMessageInChat(input);
+        }
+    })
+  }
+
+  recieveMesageFromSocket(response, isOur) {
+    const messageContainer = document.createElement('div');
+    messageContainer.classList.add('messageContainer');
+    if(!isOur) {
+        messageContainer.classList.add('left');
+    }
+
+    const innerMessage = document.createElement('div');
+    innerMessage.classList.add('message');
+    if(!isOur) {
+        innerMessage.classList.add('foreign');
+    }
+
+    const messageInfo = document.createElement('div');
+    messageInfo.classList.add('messageInfo');
+    
+    const username = document.createElement('p');
+    // TODO: Get the current user's username
+    username.innerText = 'example@gmail.com';
+    username.classList.add('username');
+    
+    const date = document.createElement('p');
+    date.innerText = moment().format('MMMM Do YYYY, h:mm:ss a'); 
+    date.classList.add('date');
+    
+    const textContainer = document.createElement('div');
+    textContainer.classList.add('textContainer');
+    
+    const textParagraph = document.createElement('p');
+    textParagraph.innerText = response.message;
+    
+    messageContainer.appendChild(innerMessage);
+    innerMessage.appendChild(messageInfo);
+    messageInfo.appendChild(username);
+    messageInfo.appendChild(date);
+    innerMessage.appendChild(textContainer);
+    textContainer.appendChild(textParagraph);
+    
+    const mainMessageContainer = this.#_shadowRoot.querySelectorAll('.message-wrapper')[0];
+    mainMessageContainer.prepend(messageContainer);
+  }
+
   connectedCallback() {
     this.listenForGame();
+    this.listenForChatMessage();
   }
 
 }
 
 customElements.define('app-root', AppComponent);
 
-const app = new AppComponent();
+export const app = new AppComponent(new SocketService());
 document.body.appendChild(app);
+ 

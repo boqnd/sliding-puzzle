@@ -82,6 +82,12 @@ body {
   overflow: auto;
   font-size: 12px;
   padding: 5px;
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.message-wrapper .messageContainer {
+  transform: translateZ(0);
 }
 
 .bottomNavigation{
@@ -130,8 +136,13 @@ body {
 
 .messageInfo{
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    /* justify-content: space-between; */
     padding: 0px 10px;
+}
+.messageInfo > p {
+  margin-top: 5px;
+  margin-bottom: 0px;
 }
 
 .textContainer{
