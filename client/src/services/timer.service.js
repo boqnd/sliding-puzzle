@@ -12,6 +12,7 @@ export class Timer {
         minuetsEl,
         hoursEl
     ) {
+        this.interval = null;
         this.tens = 0;
         this.seconds = 0;
         this.minuets = 0;
@@ -58,7 +59,7 @@ export class Timer {
     }
 
     startTimer() {
-        this.interval = setInterval(this.start.bind(this), 10);
+        this.interval = setInterval(() => this.start(), 10);
     }
 
     stopTimer() {

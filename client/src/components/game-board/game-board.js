@@ -30,7 +30,7 @@ template.innerHTML = `
 
 class GameBoard extends HTMLElement {
     #_shadowRoot = null;
-    timer;
+    // timer;
 
   constructor() {
     super();
@@ -48,18 +48,18 @@ class GameBoard extends HTMLElement {
     this.parts = [];
     this.shuffleTimeouts = [];
     this.lastShuffled;
-    this.timer = this.initializeTimer();
-    this.listenForGame();
+    // this.timer = this.initializeTimer();
+    // this.listenForGame();
   }
 
 
-  initializeTimer() {
-    const tensEl = document.getElementById("tens");
-    const secondsEl = document.getElementById("seconds");
-    const minuetsEl = document.getElementById("minuets");
-    const hoursEl = document.getElementById("hours");
-    const timer = new Timer(tensEl, secondsEl, minuetsEl, hoursEl);
-  }
+  // initializeTimer() {
+  //   const tensEl = this.#_shadowRoot.getElementById("tens");
+  //   const secondsEl = this.#_shadowRoot.getElementById("seconds");
+  //   const minuetsEl = this.#_shadowRoot.getElementById("minuets");
+  //   const hoursEl = this.#_shadowRoot.getElementById("hours");
+  //   return new Timer(tensEl, secondsEl, minuetsEl, hoursEl);
+  // }
 
   // Calculating the row and column of a part by it's position
   getRow = (pos) => {
@@ -91,13 +91,13 @@ class GameBoard extends HTMLElement {
     // Deciding the level
     if (level[0].checked) {
       this.size = 3;
-      this.baseDistance = 153;
+      this.baseDistance = 33;
     } else if (level[1].checked) {
       this.size = 4;
-      this.baseDistance = 116;
+      this.baseDistance = 25;
     } else if (level[2].checked) {
       this.size = 5;
-      this.baseDistance = 93;
+      this.baseDistance = 20;
     }
     // Loading the game
     this.loadGame();
@@ -402,31 +402,31 @@ class GameBoard extends HTMLElement {
     });
   }
 
-  listenForGame() {
-    const mutationCallback = (mutationsList) => {
-        for (const mutation of mutationsList) {
-            if ( mutation.type !== "attributes" || mutation.attributeName !== "isready" ) {
-                return;
-            }
-            if (mutation.target.getAttribute("isready") === "true") {
-                timer.resetTimer();
-                timer.startTimer();
-            } else if (mutation.target.getAttribute("isready") === "false") {
-                timer.stopTimer();
-            }
-        }
-    }
+  // listenForGame() {
+  //   const mutationCallback = (mutationsList) => {
+  //       for (const mutation of mutationsList) {
+  //           if ( mutation.type !== "attributes" || mutation.attributeName !== "isready" ) {
+  //               return;
+  //           }
+  //           if (mutation.target.getAttribute("isready") === "true") {
+  //               timer.resetTimer();
+  //               timer.startTimer();
+  //           } else if (mutation.target.getAttribute("isready") === "false") {
+  //               timer.stopTimer();
+  //           }
+  //       }
+  //   }
     
-    const observer = new MutationObserver(mutationCallback);
-    const element = document.getElementById("playerA");
+  //   const observer = new MutationObserver(mutationCallback);
+  //   const element = document.getElementById("playerA");
 
-    if(!element) {
-        window.setTimeout(this.listenForGame, 1000);
-        return;
-    }
+  //   if(!element) {
+  //       window.setTimeout(this.listenForGame, 1000);
+  //       return;
+  //   }
 
-    observer.observe(document.getElementById("playerA"), { attributes: true });
-  }
+  //   observer.observe(document.getElementById("playerA"), { attributes: true });
+  // }
 }
 
 customElements.define('game-board', GameBoard);

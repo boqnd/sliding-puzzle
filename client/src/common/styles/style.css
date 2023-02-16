@@ -22,9 +22,11 @@ body {
   background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(44,62,80,1) 100%);
 }
 .sign-out-btn {
-  position: relative;
+  position: absolute;
   margin-top: 15px;
   margin-left: 15px;
+  top: 0;
+  left: 0;
   width: 150px;
   height: 30px;
   font-size: 16px;
