@@ -1,6 +1,6 @@
 import './common/styles/style.css';
 import moment from 'moment';
-import { SocketService } from './services/socket.service.js'
+import { socketService } from './services/socket.service.js'
 import { Timer } from './services/timer.service.js';
 import { GameBoard } from './components/game-board/game-board.js';
 import { LoginComponent } from './components/auth/auth.js';
@@ -8,7 +8,7 @@ import { LoginComponent } from './components/auth/auth.js';
 export default class AppComponent extends HTMLElement {
   #_shadowRoot = null;
 
-  constructor(socketSevice) {
+  constructor() {
     super();
     this.#_shadowRoot = this.attachShadow({ mode: 'open' });
 
@@ -52,7 +52,6 @@ export default class AppComponent extends HTMLElement {
     const minuetsEl = this.#_shadowRoot.getElementById("minuets");
     const hoursEl = this.#_shadowRoot.getElementById("hours");
     this.timer = new Timer(tensEl, secondsEl, minuetsEl, hoursEl);
-    this.socketService = socketSevice;
     this.userId = -1;
   };
 
@@ -89,7 +88,7 @@ export default class AppComponent extends HTMLElement {
         return;
       }
     
-      this.socketService.emitMessage(input.value);
+      socketService.emitMessage(input.value);
       input.value = '';
   }
 
@@ -155,6 +154,6 @@ export default class AppComponent extends HTMLElement {
 
 customElements.define('app-root', AppComponent);
 
-export const app = new AppComponent(new SocketService());
+export const app = new AppComponent();
 document.body.appendChild(app);
  

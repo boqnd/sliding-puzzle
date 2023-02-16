@@ -1,7 +1,7 @@
 import io from 'socket.io-client';
 import { app } from '../app.js'
 
-export class SocketService {
+class SocketService {
   constructor() {
     this.socket = io('http://localhost:3000');
     this.userId = -1;
@@ -24,3 +24,5 @@ export class SocketService {
     });
   }
 }
+
+export const socketService = new SocketService();
