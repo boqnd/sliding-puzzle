@@ -88,7 +88,7 @@ export default class AppComponent extends HTMLElement {
         return;
       }
     
-      socketService.emitMessage(input.value);
+      socketService.emitMessage('message', input.value);
       input.value = '';
   }
 

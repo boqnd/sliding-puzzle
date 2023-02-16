@@ -8,8 +8,8 @@ class SocketService {
     this.handleSockets();
   }
 
-  emitMessage = (message) => {
-    this.socket.emit('message', message);
+  emitMessage = (event, data) => {
+    this.socket.emit(event, data);
   }
 
   handleSockets = (userId) => {
