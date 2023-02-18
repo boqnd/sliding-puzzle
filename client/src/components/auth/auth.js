@@ -94,11 +94,11 @@ export default class LoginComponent extends HTMLElement {
                 if (authService.isAuthenticated) {
                     window.location.href = '/';
                 } else {
-                    error.textContent = 'Invalid email or password';
+                    error.textContent = 'Invalid username or password';
                 }
 
             } else {
-                error.textContent = 'Please enter email and password';
+                error.textContent = 'Please enter username and password';
             }
         });
 
@@ -122,11 +122,11 @@ export default class LoginComponent extends HTMLElement {
                 if (authService.isAuthenticated) {
                     window.location.href = '/';
                 } else {
-                    error.textContent = 'Invalid email or password';
+                    error.textContent = 'Invalid username or password';
                 }
 
             } else {
-                error.textContent = 'Please enter email and password';
+                error.textContent = 'Please enter username and password';
             }
         });
         

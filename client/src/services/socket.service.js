@@ -25,8 +25,6 @@ class SocketService {
     this.socket.on('serverMsg', data => {
       this.clientRoom = data.roomNo;
       this.userId = data.socketId;
-      this.user = tokenService.getDecodedToken();
-      this.emitMessage('currentUser', {userId: this.user.userId, roomNo: this.clientRoom});
     });
 
     this.socket.on('receiveChatMessage', response => {
@@ -35,6 +33,10 @@ class SocketService {
     });
 
     this.socket.on('receiveGameMessage', response => {
+      if (response.message === 'disconnected') {
+        this.components.map(comp => comp.endGame());
+      }
+
       if (response.message.playOn === true && response.playersReady == 2) {
         this.gameOn = true;
         this.components.map(comp => comp.startGame());
@@ -63,7 +65,14 @@ class SocketService {
       if (response.message.isWin !== undefined) {
         const isOur = response.userId === this.userId;
         if (!isOur) {
-          triggerFunc(response.message.isWin, isOur, response.players);
+          triggerFunc(response.message.isWin, isOur);
+          socketService.emitMessage('gameMessage', {playOn: false});
+        }
+      }
+      if (response.message === 'disconnected') {
+        const isOur = response.userId === this.userId;
+        if (!isOur) {
+          triggerFunc(true, isOur);
           socketService.emitMessage('gameMessage', {playOn: false});
         }
       }

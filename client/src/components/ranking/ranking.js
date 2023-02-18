@@ -38,7 +38,7 @@ const templateString = `
     </main>
     `;
 
-class RankingComponent extends HTMLElement {
+export default class RankingComponent extends HTMLElement {
     #_shadowRoot = null;
 
     constructor() {
