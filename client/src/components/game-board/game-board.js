@@ -51,18 +51,7 @@ class GameBoard extends HTMLElement {
     this.shuffleTimeouts = [];
     this.lastShuffled;
     this.duration = 0;
-    // this.timer = this.initializeTimer();
-    // this.listenForGame();
   }
-
-
-  // initializeTimer() {
-  //   const tensEl = this.#_shadowRoot.getElementById("tens");
-  //   const secondsEl = this.#_shadowRoot.getElementById("seconds");
-  //   const minuetsEl = this.#_shadowRoot.getElementById("minuets");
-  //   const hoursEl = this.#_shadowRoot.getElementById("hours");
-  //   return new Timer(tensEl, secondsEl, minuetsEl, hoursEl);
-  // }
 
   // Calculating the row and column of a part by it's position
   getRow = (pos) => {
@@ -223,7 +212,6 @@ class GameBoard extends HTMLElement {
     if (isWin) {
       winLabel.innerHTML = 'You Win!';
       this.setAttribute('isready', false);
-      // updateDB();
     } else {
       winLabel.innerHTML = 'You Loose :(';
       this.setAttribute('isready', false);
