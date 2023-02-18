@@ -1,65 +1,81 @@
-import session from 'express-session';
-import passport from 'passport';
-import GoogleStrategy from 'passport-google-oauth';
 import { Router } from 'express';
 import isLoggedIn from '../middlewares/isLoggedIn.js';
+import { userService } from '../services/userService.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
-let userProfile;
 const router = Router();
 
-router.use(session({
-  resave: false,
-  saveUninitialized: true,
-  secret: 'SECRET'
-}));
-router.use(passport.initialize());
-router.use(passport.session());
 
-router.get('/success', isLoggedIn, (req, res) => {
-  // TODO: render success login page
+router.post("/register", async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
-  res.send(userProfile);
+    if (!(username && password)) {
+      res.status(400).send("All input is required");
+    }
+
+    const oldUser = await userService.findByUsername(username);
+
+    if (oldUser.length) {
+      return res.status(409).send("User Already Exist. Please Login");
+    }
+
+    const encryptedPassword = await bcrypt.hash(password, 10);
+
+    const user = await userService.create({
+      username,
+      password: encryptedPassword,
+    });
+
+    const token = jwt.sign(
+      { user_id: user.id, username },
+      process.env.SECRET,
+      {
+        expiresIn: "2h",
+      }
+    );
+
+    user.token = token;
+
+    res.status(201).json(user);
+  } catch (err) {
+    console.log(err);
+  }
 });
 
-router.get('/error', (req, res) => {
-  // TODO: render error login page
 
-  res.send('error logging in');
+router.post("/login", async (req, res) => {
+  try {
+    const { username, password } = req.body;
+
+    if (!(username && password)) {
+      res.status(400).send("All input is required");
+    }
+
+    const users = await userService.findByUsername(username);
+    var user;
+
+    if (users.length) user = users[0];
+
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const token = jwt.sign(
+        { user_id: user.id, username },
+        process.env.SECRET,
+        {
+          expiresIn: "2h",
+        }
+      );
+
+      user.token = token;
+
+      res.status(200).json(user);
+    } else {
+      res.status(400).send("Invalid Credentials");
+    }
+  } catch (err) {
+    console.log(err);
+  }
 });
-
-passport.serializeUser(function(user, cb) {
-  cb(null, user);
-});
-
-passport.deserializeUser(function(obj, cb) {
-  cb(null, obj);
-});
-//
-
-//
-// TODO: use env
-const GOOGLE_CLIENT_ID = '384846276379-ih4ucc8boll6b829up2vcrsiaolvirc2.apps.googleusercontent.com';
-const GOOGLE_CLIENT_SECRET = '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';
-
-passport.use(new GoogleStrategy.OAuth2Strategy({
-  clientID: GOOGLE_CLIENT_ID,
-  clientSecret: GOOGLE_CLIENT_SECRET,
-  callbackURL: 'http://localhost:3000/api/auth/google/callback'
-}, function(accessToken, refreshToken, profile, done) {
-  userProfile = profile;
-
-  // TODO: database action (save user?)
-
-  return done(null, userProfile);
-}));
-
-router.get('/google', passport.authenticate('google', {
-  scope : ['profile', 'email']
-}));
-
-router.get('/google/callback',
-  passport.authenticate('google', { failureRedirect: '/error' }),
-  (req, res) => res.redirect('/api/auth/success'));
-//
 
 export default router;
