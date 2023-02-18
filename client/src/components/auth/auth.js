@@ -66,11 +66,14 @@ export default class LoginComponent extends HTMLElement {
 
     connectedCallback() {
         const form = this.#_shadowRoot.querySelector('.sign-in');
-        const switchBtn = this.#_shadowRoot.querySelector('.switch');
+        const switchBtn = this.#_shadowRoot.querySelectorAll('.switch');
+        const authModals = this.#_shadowRoot.querySelectorAll(".form-wrapper .modal");
 
-        switchBtn.addEventListener('click', () => {
-            this.#_shadowRoot.querySelector('.modal').classList.toggle('active');
-        });
+        switchBtn.forEach(link => {
+            link.addEventListener('click', () => {
+              authModals.forEach(modal => modal.classList.toggle("active"));
+            });
+          });
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
