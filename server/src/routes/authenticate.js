@@ -78,4 +78,8 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/isLogged", isLoggedIn, (req, res) => {
+  res.status(200).send(req.user);
+});
+
 export default router;
