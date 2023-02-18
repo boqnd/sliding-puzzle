@@ -2,6 +2,8 @@
 import './game-board-style.css';
 import { socketService } from '../../services/socket.service.js'
 import { gameService } from '../../services/game.service.js';
+import { svGameService } from '../../services/server-game.service';
+import { scoreService } from '../../services/score.service';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -53,6 +55,7 @@ class GameBoard extends HTMLElement {
 
     gameService.append(this.#_shadowRoot);
     socketService.listenForWin(this.endGame);
+    this.duration = 0;
   }
 
   // Calculating the row and column of a part by it's position
@@ -209,7 +212,7 @@ class GameBoard extends HTMLElement {
   };
 
   // Function for ending the game (win/loose)
-  endGame = (isWin, isOur) => {
+  endGame = async (isWin, isOur) => {
     const partsElements = this.#_shadowRoot.querySelectorAll('.part');
     const winLabel = this.#_shadowRoot.querySelectorAll('.win-label')[0];
     const separator = [...this.#_shadowRoot.querySelectorAll('.separator')];
@@ -221,7 +224,6 @@ class GameBoard extends HTMLElement {
       if (isOur === undefined) {
         socketService.emitMessage('gameMessage', {isWin: false});
       }
-      // updateDB();
     } else {
       winLabel.innerHTML = 'Loose!';
       if (isOur === undefined) {
@@ -238,19 +240,33 @@ class GameBoard extends HTMLElement {
     separator.forEach((element) => element.classList.add('hidden'));
     this.parts = [];
     this.setupPlayEventlistener();
-
     if (isOur === undefined) {
       socketService.emitMessage('gameMessage', {playOn: false});
     }
     gameService.clear();
+      // save game
+      // players and duration are hardcoded for now
+    const game = await svGameService.createGame({
+      size: this.size,
+      duration: this.duration,
+      player1Id: 1,
+      player2Id: 2,
+    });
+
+    scoreService.createScore({
+      size: this.size,
+      score: this.duration,
+      gameId: game.id,
+      winner: isWin ? game.player1Id : game.player2Id
+    });
   };
 
   // Function, triggered on every part movement(checks for a win on evry move)
-  winCheck = (event) => {
+  winCheck = async (event) => {
     this.movePart(event.target);
 
     if (this.checkSolution()) {
-      this.endGame(true);
+      await this.endGame(true);
     }
   };
 

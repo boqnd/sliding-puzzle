@@ -5,6 +5,7 @@ import { gameService } from './services/game.service.js';
 import { Timer } from './services/timer.service.js';
 import { GameBoard } from './components/game-board/game-board.js';
 import { LoginComponent } from './components/auth/auth.js';
+import { HttpService } from './services/http.service.js';
 
 export default class AppComponent extends HTMLElement {
   #_shadowRoot = null;
