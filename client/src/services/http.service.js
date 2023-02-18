@@ -1,3 +1,5 @@
+import { tokenService } from "./token.service";
+
 /**
  * @fileoverview HttpService class
  * @summary abstract class for http requests
@@ -5,24 +7,23 @@
 export class HttpService {
   constructor() {
     this.baseUrl = 'http://localhost:3000/api/';
-    this.token = null;
-  }
-
-  setAuthorizationHeader(token) {
-    this.token = token;
   }
 
   getAuthorizationHeader() {
-    return this.token;
+    return tokenService.getToken();
   }
 
   async request(url, options) {
-    const response = await fetch(this.baseUrl + url, options);
-    const data = await response.json();
-    if (response.ok) {
-      return data;
-    } else {
-      throw new Error(data.message);
+    try {
+        const response = await fetch(this.baseUrl + url, options);
+        const data = await response.json();
+        if (response.ok) {
+            return data;
+        } else {
+            console.log(data.message);
+        }
+    } catch (error) {
+        console.log(error);
     }
   }
 

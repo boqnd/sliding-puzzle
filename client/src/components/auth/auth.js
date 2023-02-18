@@ -1,6 +1,15 @@
+import { authService } from '../../services/auth.service.js';
 import './style.css'
 
-const templateString = `
+
+
+export default class LoginComponent extends HTMLElement {
+    #_shadowRoot = null;
+
+    constructor() {
+        super();
+
+        const templateString = `
     <style>
         @import "main.css";
     </style>
@@ -10,8 +19,8 @@ const templateString = `
             <p class="action">Sign in</p>
             <form class="sign-in" id="form-self" action="#">
                 <div class="input">
-                    <input type="email" class="input-field" name="email" placeholder=" " required/>
-                    <label class="input-label" for="Email">Email</label>
+                    <input type="text" class="input-field" name="username" placeholder=" " required/>
+                    <label class="input-label" for="Email">Username</label>
                 </div>
                 <div class="input">
                     <input type="password" class="input-field" name="password" placeholder=" " required />
@@ -49,17 +58,53 @@ const templateString = `
         </div>
     </main>`
 
-class LoginComponent extends HTMLElement {
-    #_shadowRoot = null;
-
-    constructor() {
-        super();
         this.#_shadowRoot = this.attachShadow({mode: 'open'});
         const template = document.createElement('template');
         template.innerHTML = templateString;
         this.#_shadowRoot.appendChild(template.content.cloneNode(true));
     }
 
+    connectedCallback() {
+        const form = this.#_shadowRoot.querySelector('.sign-in');
+        const switchBtn = this.#_shadowRoot.querySelector('.switch');
+
+        switchBtn.addEventListener('click', () => {
+            this.#_shadowRoot.querySelector('.modal').classList.toggle('active');
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = form.username.value;
+            const password = form.password.value;
+            const error = form.querySelector('.error');
+            error.textContent = '';
+
+            if (username && password) {
+                const user = {
+                    username,
+                    password
+                };
+
+                await authService.login(user);
+                
+                if (authService.isAuthenticated) {
+                    window.location.href = '/';
+                } else {
+                    error.textContent = 'Invalid email or password';
+                }
+
+            } else {
+                error.textContent = 'Please enter email and password';
+            }
+        });
+        
+
+    }
+
+
+
 }
 
 customElements.define("app-login", LoginComponent);
+
+export const loginComponent = new LoginComponent();
