@@ -38,6 +38,20 @@ const convictConfig = convict({
       env: 'SERVER_PORT',
       default: 3000
     }
+  },
+  jwt: {
+    secret: {
+      doc: 'JWT Secret',
+      format: 'String',
+      default: 'secret',
+      env: 'JWT_SECRET'
+    },
+    expiresIn: {
+      doc: 'JWT Expiration time',
+      format: 'String',
+      default: '2h',
+      env: 'JWT_EXPIRES_IN'
+    }
   }
 });
 
