@@ -11,7 +11,7 @@ export default class LoginComponent extends HTMLElement {
 
         const templateString = `
     <style>
-        @import "main.css";
+        @import "../main.css";
     </style>
 <main class="form-wrapper">
         <div class="modal active">
