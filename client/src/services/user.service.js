@@ -1,3 +1,5 @@
+import { HttpService } from "./http.service";
+
 class UserService extends HttpService {
     constructor() {
         super();
@@ -23,3 +25,5 @@ class UserService extends HttpService {
         return this.delete(`/users/${id}`);
     }
 }
+
+export const userService = new UserService();

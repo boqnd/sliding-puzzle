@@ -1,6 +1,6 @@
 import io from 'socket.io-client';
 
-import { app } from '../app.js'
+import { gameScreenComponent } from '../components/game-screen/game-screen.js'
 
 class SocketService {
   constructor() {
@@ -23,29 +23,29 @@ class SocketService {
 
     this.socket.on('receiveChatMessage', response => {
       const isOur = response.userId === this.userId;
-      app.recieveMesageFromSocket(response, isOur);
+      gameScreenComponent.recieveMesageFromSocket(response, isOur);
     });
 
     this.socket.on('receiveGameMessage', response => {
       if (response.message.playOn === true && response.playersReady == 2) {
         this.gameOn = true;
-        app.startGame();
+        gameScreenComponent.startGame();
       } else if (response.message.playOn === true) {
         const isOur = response.userId === this.userId;
-        app.hideBoard(isOur);
+        gameScreenComponent.hideBoard(isOur);
       } else if (response.message.playOn === false) {
         this.gameOn = false;
-        app.endGame();
+        gameScreenComponent.endGame();
       }
 
       if (response.message.movedPart) {
         const isOur = response.userId === this.userId;
-        app.emitBoard(isOur);
+        gameScreenComponent.emitBoard(isOur);
       }
 
       if (response.message.innerHtml) {
         const isOur = response.userId === this.userId;
-        app.updatePlayerB(response.message.innerHtml, isOur);
+        gameScreenComponent.updatePlayerB(response.message.innerHtml, isOur);
       }
     });
   }
