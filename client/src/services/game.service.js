@@ -11,7 +11,6 @@ class GameService {
             this.games.first = game;
         } else if (!this.games.second) {
             this.games.second = game;
-            console.log(this.games.first);
         }
     }
 

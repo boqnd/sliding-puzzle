@@ -29,7 +29,7 @@ export default class AppComponent extends HTMLElement {
         <div class="vertical-line"></div>
         </div>
 
-        <div class="hide hider hider-playerB"></div>
+        <div class="hider hider-playerB"></div>
         <game-board id="playerB"></game-board>
         
         </main>
@@ -60,7 +60,7 @@ export default class AppComponent extends HTMLElement {
   };
 
   emitBoard = (isOur) => {
-    if (isOur) {
+    if (isOur && gameService.getFirst()) {
       socketService.emitMessage('gameMessage', {innerHtml: gameService.getFirst().innerHTML});
     }
   }
@@ -90,8 +90,6 @@ export default class AppComponent extends HTMLElement {
     let count = 5;
     countdownElement[0].innerHTML = `<h1>${count}</h1>`;
     countdownElement[1].innerHTML = `<h1>${count}</h1>`;
-    console.log(countdownElement);
-    console.log(countdownElement.innerHTML);
     countdownElement[0].classList.remove("hide");
     countdownElement[1].classList.remove("hide");
 
@@ -105,6 +103,8 @@ export default class AppComponent extends HTMLElement {
         clearInterval(intervalId);
         countdownElement[0].classList.add("hide");
         countdownElement[1].classList.add("hide");
+        countdownElement[0].innerHTML = "";
+        countdownElement[1].innerHTML = "";
       }
     }, 1000);
   }
@@ -119,6 +119,8 @@ export default class AppComponent extends HTMLElement {
   }
 
   endGame = () => {
+    const countdownElement = this.#_shadowRoot.querySelectorAll('.hider')[1];
+    countdownElement.classList.remove('hide');
     this.timer.stopTimer();
   }
   // listenForGame = () => {

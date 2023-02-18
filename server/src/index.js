@@ -43,8 +43,12 @@ async function start() {
     socket.on('gameMessage', message => {
       if (message.playOn === true) {
         playersReadyMap.set(roomNo, playersReadyMap.get(roomNo) + 1);
+        console.log(playersReadyMap.get(roomNo));
       } else if (message.playOn === false) {
-        playersReadyMap.set(roomNo, playersReadyMap.get(roomNo) - 1);
+        if (playersReadyMap.get(roomNo) !== 0) {
+          playersReadyMap.set(roomNo, playersReadyMap.get(roomNo) - 1);
+        }
+        console.log(playersReadyMap.get(roomNo));
       }
       io.to(roomNo).emit('receiveGameMessage', {
         userId: socket.id,

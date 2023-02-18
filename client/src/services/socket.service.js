@@ -16,7 +16,6 @@ class SocketService {
   }
 
   handleSockets = () => {
-    
     this.socket.on('serverMsg', data => {
       this.clientRoom = data.roomNo;
       this.userId = data.socketId;
@@ -47,6 +46,18 @@ class SocketService {
       if (response.message.innerHtml) {
         const isOur = response.userId === this.userId;
         app.updatePlayerB(response.message.innerHtml, isOur);
+      }
+    });
+  }
+
+  listenForWin = (triggerFunc) => {
+    this.socket.on('receiveGameMessage', response => {
+      if (response.message.isWin !== undefined) {
+        const isOur = response.userId === this.userId;
+        if (!isOur) {
+          triggerFunc(response.message.isWin, isOur);
+          socketService.emitMessage('gameMessage', {playOn: false});
+        }
       }
     });
   }

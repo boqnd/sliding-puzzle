@@ -23,7 +23,7 @@ template.innerHTML = `
                 <input type="radio" id="option3" class="option" name="options" value="true">
                 <label for="option3">5x5</label>
             </div>
-            <button class="play">Play</button>
+            <button class="play">Ready</button>
             <h2 class="win-label hidden">YOU WIN!</h2>
         </ul>
     </div>
@@ -52,6 +52,7 @@ class GameBoard extends HTMLElement {
     this.#isGameStarted = false;
 
     gameService.append(this.#_shadowRoot);
+    socketService.listenForWin(this.endGame);
   }
 
   // Calculating the row and column of a part by it's position
@@ -73,7 +74,7 @@ class GameBoard extends HTMLElement {
     const separator = [...this.#_shadowRoot.querySelectorAll('.separator')];
     const level = [...this.#_shadowRoot.querySelectorAll('.option')];
 
-    playBtn.innerHTML = 'Play Again';
+    playBtn.innerHTML = 'Ready';
     // Hiding all the unnessecery elements and showing all we need
     this.shuffleEl.classList.remove('hidden');
     this.giveUp.classList.remove('hidden');
@@ -209,7 +210,7 @@ class GameBoard extends HTMLElement {
   };
 
   // Function for ending the game (win/loose)
-  endGame = (isWin) => {
+  endGame = (isWin, isOur) => {
     const partsElements = this.#_shadowRoot.querySelectorAll('.part');
     const winLabel = this.#_shadowRoot.querySelectorAll('.win-label')[0];
     const separator = [...this.#_shadowRoot.querySelectorAll('.separator')];
@@ -218,11 +219,15 @@ class GameBoard extends HTMLElement {
     // Deciding the label based on the given parameter and doing the proper operations with the timer
     if (isWin) {
       winLabel.innerHTML = 'Win!';
-      this.setAttribute('isready', false);
+      if (isOur === undefined) {
+        socketService.emitMessage('gameMessage', {isWin: false});
+      }
       // updateDB();
     } else {
       winLabel.innerHTML = 'Loose!';
-      this.setAttribute('isready', false);
+      if (isOur === undefined) {
+        socketService.emitMessage('gameMessage', {isWin: true});
+      }
     }
     // Removing all parts from the board, hiding all the unnessecery elements, showing all we need and setting the event listener to the play btn again after it is visible
     partsElements.forEach((element) => element.remove());
@@ -235,7 +240,9 @@ class GameBoard extends HTMLElement {
     this.parts = [];
     this.setupPlayEventlistener();
 
-    socketService.emitMessage('gameMessage', {playOn: false});
+    if (isOur === undefined) {
+      socketService.emitMessage('gameMessage', {playOn: false});
+    }
     gameService.clear();
   };
 
