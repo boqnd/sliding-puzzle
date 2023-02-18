@@ -1,6 +1,7 @@
 import GameScreenComponent from './components/game-screen/game-screen.js';
 import LoginComponent from './components/auth/auth.js';
 import { pathToRegexp } from 'path-to-regexp';
+import { socketService } from './services/socket.service.js';
 
 export class Router extends HTMLElement {
   #_shadowRoot = null;
@@ -40,6 +41,7 @@ export class Router extends HTMLElement {
       this.#_shadowRoot.removeChild(this.#_shadowRoot.children[0]);
     }
     this.#_shadowRoot.appendChild(instance);
+    socketService.appendComponent(instance);
 
     if (skipHistory) { return; }
     history.pushState('', '', path);
