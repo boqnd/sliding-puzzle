@@ -78,6 +78,31 @@ export class Timer {
         this.hoursEl.innerHTML = "00";
     }
 
+    serialize() {
+        return (this.hours * 60 * 60 + this.minuets * 60 + this.seconds) * 1000 + this.tens;
+    }
+
+    formTwoDigitString(num) {
+        return num.toString().padStart(2, '0');
+    }
+
+    deserialize(scoreInMilliseconds) {
+        let seconds = Math.floor(scoreInMilliseconds / 1000);
+        let tens = scoreInMilliseconds - seconds * 1000;
+        let minutes = Math.floor(seconds / 60);
+        let hours = Math.floor(minutes / 60);
+
+        seconds = seconds % 60;
+        minutes = minutes % 60;
+        hours = hours % 24;
+
+        return {
+            tens: this.formTwoDigitString(tens),
+            seconds: this.formTwoDigitString(seconds),
+            minutes: this.formTwoDigitString(minutes),
+            hours: this.formTwoDigitString(hours),
+        }
+    }
 
     get getTens() {
         return this.tens;
