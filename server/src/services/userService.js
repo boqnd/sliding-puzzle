@@ -3,8 +3,8 @@ import { UserModel } from '../models/user-model.js';
 class UserService {
   async create(user) {
     return await UserModel.query().insertAndFetch({
-      email: user.email,
-      fullName: user.fullName,
+      username: user.username,
+      password: user.password,
     });
   }
 
@@ -16,11 +16,15 @@ class UserService {
     return await UserModel.query().findById(id).throwIfNotFound();
   }
 
+  async findByUsername(username) {
+    return await UserModel.query().where({username});
+  }
+
   async update(id, user) {
     return await UserModel.query()
       .patchAndFetchById(id, {
-        email: user.email,
-        fullName: user.fullName,
+        username: user.username,
+        password: user.password,
       })
       .throwIfNotFound();
   }
