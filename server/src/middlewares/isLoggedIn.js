@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import createError from 'http-errors';
-import convictConfig from '../config/convictConfig';
+import { convictConfig } from '../../config.js';
 
 export default function isLoggedIn(req, res, next) {
   const token = req.headers.authorization;
