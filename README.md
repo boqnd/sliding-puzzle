@@ -13,7 +13,6 @@ You can play the game single-player or multiplayer with a friend with whom you w
 - Game chat
 - Real-time multiplayer
 - Different levels (3x3, 4x4, 5x5)
-- Image upload (for the game board). Default is with numbers
 
 
 ## Developers:

@@ -149,6 +149,39 @@ body {
     padding: 0px 10px;
 }
 
+.hide {
+  display: none;
+}
+
+.hider {
+  margin-top: 64px;
+  height: 630px;
+  width: 650px;
+  max-height: 70vh;
+  max-width: 70vh;
+  z-index: 10;
+}
+
+.hider > h1 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+}
+
+.hider-playerA {
+  position: absolute;
+  background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(44,62,80,1) 100%);
+  left: -2%;
+}
+
+.hider-playerB {
+  position: absolute;
+  background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(44,62,80,1) 100%);;
+  left: 57%;
+}
+
 
 @media only screen and (max-width: 650px) {
   body {

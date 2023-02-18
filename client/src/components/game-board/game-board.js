@@ -1,6 +1,7 @@
 'use strict';
 import './game-board-style.css';
-import { Timer } from '../../services/timer.service.js';
+import { socketService } from '../../services/socket.service.js'
+import { gameService } from '../../services/game.service.js';
 import { svGameService } from '../../services/server-game.service';
 import { scoreService } from '../../services/score.service';
 
@@ -24,7 +25,7 @@ template.innerHTML = `
                 <input type="radio" id="option3" class="option" name="options" value="true">
                 <label for="option3">5x5</label>
             </div>
-            <button class="play">Play</button>
+            <button class="play">Ready</button>
             <h2 class="win-label hidden">YOU WIN!</h2>
         </ul>
     </div>
@@ -32,11 +33,11 @@ template.innerHTML = `
 
 class GameBoard extends HTMLElement {
     #_shadowRoot = null;
-    // timer;
+    #isGameStarted = false;
 
   constructor() {
     super();
-    this.#_shadowRoot = this.attachShadow({ mode: 'closed' });
+    this.#_shadowRoot = this.attachShadow({ mode: 'open' });
     this.#_shadowRoot.appendChild(template.content.cloneNode(true));
 
     // Setting up variables needed for the logic
@@ -50,6 +51,10 @@ class GameBoard extends HTMLElement {
     this.parts = [];
     this.shuffleTimeouts = [];
     this.lastShuffled;
+    this.#isGameStarted = false;
+
+    gameService.append(this.#_shadowRoot);
+    socketService.listenForWin(this.endGame);
     this.duration = 0;
   }
 
@@ -72,7 +77,7 @@ class GameBoard extends HTMLElement {
     const separator = [...this.#_shadowRoot.querySelectorAll('.separator')];
     const level = [...this.#_shadowRoot.querySelectorAll('.option')];
 
-    playBtn.innerHTML = 'Play Again';
+    playBtn.innerHTML = 'Ready';
     // Hiding all the unnessecery elements and showing all we need
     this.shuffleEl.classList.remove('hidden');
     this.giveUp.classList.remove('hidden');
@@ -95,6 +100,11 @@ class GameBoard extends HTMLElement {
     this.loadGame();
     // Starting the timer
     this.setAttribute('isready', true);
+
+    socketService.emitMessage('gameMessage', {playOn: true});
+
+    this.#isGameStarted = true;
+    gameService.append(this.#_shadowRoot);
   };
 
   // Function for setting the event listener to the play btn when it is visible(calling it right after because it is visible on the page load)
@@ -202,7 +212,7 @@ class GameBoard extends HTMLElement {
   };
 
   // Function for ending the game (win/loose)
-  endGame = async (isWin) => {
+  endGame = async (isWin, isOur) => {
     const partsElements = this.#_shadowRoot.querySelectorAll('.part');
     const winLabel = this.#_shadowRoot.querySelectorAll('.win-label')[0];
     const separator = [...this.#_shadowRoot.querySelectorAll('.separator')];
@@ -210,11 +220,15 @@ class GameBoard extends HTMLElement {
     const playBtn = this.#_shadowRoot.querySelectorAll('.play')[0];
     // Deciding the label based on the given parameter and doing the proper operations with the timer
     if (isWin) {
-      winLabel.innerHTML = 'You Win!';
-      this.setAttribute('isready', false);
+      winLabel.innerHTML = 'Win!';
+      if (isOur === undefined) {
+        socketService.emitMessage('gameMessage', {isWin: false});
+      }
     } else {
-      winLabel.innerHTML = 'You Loose :(';
-      this.setAttribute('isready', false);
+      winLabel.innerHTML = 'Loose!';
+      if (isOur === undefined) {
+        socketService.emitMessage('gameMessage', {isWin: true});
+      }
     }
     // Removing all parts from the board, hiding all the unnessecery elements, showing all we need and setting the event listener to the play btn again after it is visible
     partsElements.forEach((element) => element.remove());
@@ -226,21 +240,25 @@ class GameBoard extends HTMLElement {
     separator.forEach((element) => element.classList.add('hidden'));
     this.parts = [];
     this.setupPlayEventlistener();
-       // save game
-       // players and duration are hardcoded for now
-       const game = await svGameService.createGame({
-        size: this.size,
-        duration: this.duration,
-        player1Id: 1,
-        player2Id: 2,
-      });
+    if (isOur === undefined) {
+      socketService.emitMessage('gameMessage', {playOn: false});
+    }
+    gameService.clear();
+      // save game
+      // players and duration are hardcoded for now
+    const game = await svGameService.createGame({
+      size: this.size,
+      duration: this.duration,
+      player1Id: 1,
+      player2Id: 2,
+    });
 
-      scoreService.createScore({
-        size: this.size,
-        score: this.duration,
-        gameId: game.id,
-        winner: isWin ? game.player1Id : game.player2Id
-      });
+    scoreService.createScore({
+      size: this.size,
+      score: this.duration,
+      gameId: game.id,
+      winner: isWin ? game.player1Id : game.player2Id
+    });
   };
 
   // Function, triggered on every part movement(checks for a win on evry move)
@@ -277,6 +295,8 @@ class GameBoard extends HTMLElement {
     this.parts[partNumber].top = emptyTop;
     this.parts[partNumber].left = emptyLeft;
     this.parts[partNumber].position = emptyPosition;
+
+    socketService.emitMessage("gameMessage", {movedPart: true});
   };
 
   // Function for checking if a part can be moved
@@ -349,7 +369,7 @@ class GameBoard extends HTMLElement {
 
   // Function that loads the game, using all the functions above
   // Potentionally async when we add db
-  loadGame = async () => {
+  loadGame = async (shouldShuffle = false) => {
     // Filling the parts array with propper info
     for (let index = 1; index < this.size * this.size; index++) {
       const row = this.getRow(index);
@@ -376,18 +396,10 @@ class GameBoard extends HTMLElement {
     }
 
     // Start shuffle
-    this.shuffle();
-  };
-
-  static get observedAttributes() {
-    return ['isready'];
-  }
-
-  attrbuteChangedCallback(prop, oldValue, newValue) {
-    if (prop === 'isready') {
-      console.log('Attribute changed');
+    if (!shouldShuffle) {
+      this.shuffle();
     }
-  }
+  };
 
   connectedCallback() {
     this.setupPlayEventlistener();
@@ -406,6 +418,10 @@ class GameBoard extends HTMLElement {
     this.giveUp.removeEventListener('click', () => {
       this.endGame(false);
     });
+  }
+
+  get gameStarted() {
+    return this.#isGameStarted;
   }
 }
 
