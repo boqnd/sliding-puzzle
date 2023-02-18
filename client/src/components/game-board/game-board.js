@@ -1,6 +1,7 @@
 'use strict';
 import './game-board-style.css';
-import { Timer } from '../../services/timer.service.js';
+import { socketService } from '../../services/socket.service.js'
+import { gameService } from '../../services/game.service.js';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -30,11 +31,11 @@ template.innerHTML = `
 
 class GameBoard extends HTMLElement {
     #_shadowRoot = null;
-    // timer;
+    #isGameStarted = false;
 
   constructor() {
     super();
-    this.#_shadowRoot = this.attachShadow({ mode: 'closed' });
+    this.#_shadowRoot = this.attachShadow({ mode: 'open' });
     this.#_shadowRoot.appendChild(template.content.cloneNode(true));
 
     // Setting up variables needed for the logic
@@ -48,18 +49,10 @@ class GameBoard extends HTMLElement {
     this.parts = [];
     this.shuffleTimeouts = [];
     this.lastShuffled;
-    // this.timer = this.initializeTimer();
-    // this.listenForGame();
+    this.#isGameStarted = false;
+
+    gameService.append(this.#_shadowRoot);
   }
-
-
-  // initializeTimer() {
-  //   const tensEl = this.#_shadowRoot.getElementById("tens");
-  //   const secondsEl = this.#_shadowRoot.getElementById("seconds");
-  //   const minuetsEl = this.#_shadowRoot.getElementById("minuets");
-  //   const hoursEl = this.#_shadowRoot.getElementById("hours");
-  //   return new Timer(tensEl, secondsEl, minuetsEl, hoursEl);
-  // }
 
   // Calculating the row and column of a part by it's position
   getRow = (pos) => {
@@ -103,6 +96,12 @@ class GameBoard extends HTMLElement {
     this.loadGame();
     // Starting the timer
     this.setAttribute('isready', true);
+
+    socketService.emitMessage('gameMessage', {playOn: true});
+    // socketService.emitMessage('gameMessage', JSON.stringify(this.#_shadowRoot));
+    // console.log(this);
+    this.#isGameStarted = true;
+    gameService.append(this.#_shadowRoot);
   };
 
   // Function for setting the event listener to the play btn when it is visible(calling it right after because it is visible on the page load)
@@ -218,11 +217,11 @@ class GameBoard extends HTMLElement {
     const playBtn = this.#_shadowRoot.querySelectorAll('.play')[0];
     // Deciding the label based on the given parameter and doing the proper operations with the timer
     if (isWin) {
-      winLabel.innerHTML = 'You Win!';
+      winLabel.innerHTML = 'Win!';
       this.setAttribute('isready', false);
       // updateDB();
     } else {
-      winLabel.innerHTML = 'You Loose :(';
+      winLabel.innerHTML = 'Loose!';
       this.setAttribute('isready', false);
     }
     // Removing all parts from the board, hiding all the unnessecery elements, showing all we need and setting the event listener to the play btn again after it is visible
@@ -235,6 +234,9 @@ class GameBoard extends HTMLElement {
     separator.forEach((element) => element.classList.add('hidden'));
     this.parts = [];
     this.setupPlayEventlistener();
+
+    socketService.emitMessage('gameMessage', {playOn: false});
+    gameService.clear();
   };
 
   // Function, triggered on every part movement(checks for a win on evry move)
@@ -271,6 +273,8 @@ class GameBoard extends HTMLElement {
     this.parts[partNumber].top = emptyTop;
     this.parts[partNumber].left = emptyLeft;
     this.parts[partNumber].position = emptyPosition;
+
+    socketService.emitMessage("gameMessage", {movedPart: true});
   };
 
   // Function for checking if a part can be moved
@@ -343,7 +347,7 @@ class GameBoard extends HTMLElement {
 
   // Function that loads the game, using all the functions above
   // Potentionally async when we add db
-  loadGame = async () => {
+  loadGame = async (shouldShuffle = false) => {
     // Filling the parts array with propper info
     for (let index = 1; index < this.size * this.size; index++) {
       const row = this.getRow(index);
@@ -370,18 +374,20 @@ class GameBoard extends HTMLElement {
     }
 
     // Start shuffle
-    this.shuffle();
+    if (!shouldShuffle) {
+      this.shuffle();
+    }
   };
 
-  static get observedAttributes() {
-    return ['isready'];
-  }
+  // static get observedAttributes() {
+  //   return ['isready'];
+  // }
 
-  attrbuteChangedCallback(prop, oldValue, newValue) {
-    if (prop === 'isready') {
-      console.log('Attribute changed');
-    }
-  }
+  // attrbuteChangedCallback(prop, oldValue, newValue) {
+  //   if (prop === 'isready') {
+  //     console.log('Attribute changed');
+  //   }
+  // }
 
   connectedCallback() {
     this.setupPlayEventlistener();
@@ -400,6 +406,10 @@ class GameBoard extends HTMLElement {
     this.giveUp.removeEventListener('click', () => {
       this.endGame(false);
     });
+  }
+
+  get gameStarted() {
+    return this.#isGameStarted;
   }
 }
 

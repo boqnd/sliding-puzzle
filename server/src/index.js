@@ -3,6 +3,8 @@ import { convictConfig } from '../config.js';
 import { Server } from 'socket.io';
 
 const app = new App();
+let clientNo = 0;
+let roomNo;
 
 async function start() {
   await app.init();
@@ -22,13 +24,31 @@ async function start() {
   });
 
   const io = new Server(server, options);
+  const playersReadyMap = new Map();
 
   io.on('connection', socket => {
-    socket.emit('welcome', socket.id);
-    socket.join('room1');
-    socket.on('message', message => {
-      io.to('room1').emit('receiveMessage', {
+    clientNo++;
+    roomNo = Math.round(clientNo / 2);
+    playersReadyMap.set(roomNo, 0);
+    socket.join(roomNo);
+    socket.emit('serverMsg', {clientNo: clientNo, roomNo: roomNo, socketId: socket.id});
+    socket.emit('serverToClient', 'Hello, client!');
+    socket.on('chatMessage', message => {
+      io.to(roomNo).emit('receiveChatMessage', {
         userId: socket.id,
+        message: message
+      });
+    });
+
+    socket.on('gameMessage', message => {
+      if (message.playOn === true) {
+        playersReadyMap.set(roomNo, playersReadyMap.get(roomNo) + 1);
+      } else if (message.playOn === false) {
+        playersReadyMap.set(roomNo, playersReadyMap.get(roomNo) - 1);
+      }
+      io.to(roomNo).emit('receiveGameMessage', {
+        userId: socket.id,
+        playersReady: playersReadyMap.get(roomNo),
         message: message
       });
     });

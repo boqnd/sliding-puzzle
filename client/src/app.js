@@ -1,6 +1,7 @@
 import './common/styles/style.css';
 import moment from 'moment';
-import { socketService } from './services/socket.service.js'
+import { socketService } from './services/socket.service.js';
+import { gameService } from './services/game.service.js';
 import { Timer } from './services/timer.service.js';
 import { GameBoard } from './components/game-board/game-board.js';
 import { LoginComponent } from './components/auth/auth.js';
@@ -19,14 +20,17 @@ export default class AppComponent extends HTMLElement {
         <div><button class="btn sign-out-btn">Sign out</button> <span id="username"></span></div>
         <main class="sliding-puzzle-figure">
         
-        <game-board id="playerA" isready="false"></game-board>
+        <div class="hide hider hider-playerA"></div>
+        <game-board id="playerA"></game-board>
         
         <div class="timer">
         <button class="btn ranking">Ranking</button>
         <p><span id="hours">00</span>:<span id="minuets">00</span>:<span id="seconds">00</span>:<span id="tens">00</span></p>
         <div class="vertical-line"></div>
         </div>
-        <game-board id="playerB" isready="false"></game-board>
+
+        <div class="hide hider hider-playerB"></div>
+        <game-board id="playerB"></game-board>
         
         </main>
         <div class="chat-box">
@@ -55,40 +59,101 @@ export default class AppComponent extends HTMLElement {
     this.userId = -1;
   };
 
-
-  listenForGame = () => {
-    const mutationCallback = (mutationsList) => {
-        for (const mutation of mutationsList) {
-            if ( mutation.type !== "attributes" || mutation.attributeName !== "isready" ) {
-                return;
-            }
-            if (mutation.target.getAttribute("isready") === "true") {
-                this.timer.resetTimer();
-                this.timer.startTimer();
-            } else if (mutation.target.getAttribute("isready") === "false") {
-                this.timer.stopTimer();
-            }
-        }
+  emitBoard = (isOur) => {
+    if (isOur) {
+      socketService.emitMessage('gameMessage', {innerHtml: gameService.getFirst().innerHTML});
     }
-    
-    const observer = new MutationObserver(mutationCallback);
-    const element = this.#_shadowRoot.getElementById("playerA");
-
-    if(!element) {
-        window.setTimeout(this.listenForGame, 1000);
-
-        return;
-    }
-
-    observer.observe(this.#_shadowRoot.getElementById("playerA"), { attributes: true });
   }
+  updatePlayerB = (innerHtml, isOur) => {
+    if (!isOur) {
+      const playerB = this.#_shadowRoot.getElementById("playerB");
+      playerB.shadowRoot.innerHTML = innerHtml;
+    }
+  }
+
+  hideBoard = (isOur) => {
+    const countdownElement = this.#_shadowRoot.querySelectorAll('.hider');
+
+    if(isOur) {
+      countdownElement[0].classList.remove("hide");
+    } else {
+      if (countdownElement[1]) {
+        countdownElement[1].classList.remove("hide");
+      } else {
+        countdownElement[0].classList.remove("hide");
+      }
+    }
+  }
+
+  countDown = () => {
+    const countdownElement = this.#_shadowRoot.querySelectorAll('.hider');
+    let count = 5;
+    countdownElement[0].innerHTML = `<h1>${count}</h1>`;
+    countdownElement[1].innerHTML = `<h1>${count}</h1>`;
+    console.log(countdownElement);
+    console.log(countdownElement.innerHTML);
+    countdownElement[0].classList.remove("hide");
+    countdownElement[1].classList.remove("hide");
+
+    const intervalId = setInterval(() => {
+      count--;
+
+      countdownElement[0].innerHTML = `<h1>${count}</h1>`;
+      countdownElement[1].innerHTML = `<h1>${count}</h1>`;
+
+      if (count === 0) {
+        clearInterval(intervalId);
+        countdownElement[0].classList.add("hide");
+        countdownElement[1].classList.add("hide");
+      }
+    }, 1000);
+  }
+
+  startGame = async () => {
+    this.countDown();
+
+    setTimeout(() => {
+      this.timer.resetTimer();
+      this.timer.startTimer();
+    }, 5000);
+  }
+
+  endGame = () => {
+    this.timer.stopTimer();
+  }
+  // listenForGame = () => {
+  //   const mutationCallback = (mutationsList) => {
+  //       for (const mutation of mutationsList) {
+  //           if ( mutation.type !== "attributes" || mutation.attributeName !== "isready" ) {
+  //               return;
+  //           }
+  //           if (mutation.target.getAttribute("isready") === "true") {
+  //               this.timer.resetTimer();
+  //               this.timer.startTimer();
+  //           } else if (mutation.target.getAttribute("isready") === "false") {
+  //               this.timer.stopTimer();
+  //           }
+  //       }
+  //   }
+    
+  //   const observer = new MutationObserver(mutationCallback);
+  //   const element = this.#_shadowRoot.getElementById("playerA");
+
+  //   if(!element) {
+  //       window.setTimeout(this.listenForGame, 1000);
+
+  //       return;
+  //   }
+
+  //   observer.observe(this.#_shadowRoot.getElementById("playerA"), { attributes: true });
+  // }
 
   sendMessageInChat = (input) => {
     if(input.value.trim() === '') {
         return;
       }
     
-      socketService.emitMessage('message', input.value);
+      socketService.emitMessage('chatMessage', input.value);
       input.value = '';
   }
 
@@ -146,7 +211,7 @@ export default class AppComponent extends HTMLElement {
   }
 
   connectedCallback() {
-    this.listenForGame();
+    // this.listenForGame();
     this.listenForChatMessage();
   }
 
