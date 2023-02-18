@@ -1,6 +1,8 @@
 'use strict';
 import './game-board-style.css';
 import { Timer } from '../../services/timer.service.js';
+import { gameService } from '../../services/game.service';
+import { scoreService } from '../../services/score.service';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -48,6 +50,7 @@ class GameBoard extends HTMLElement {
     this.parts = [];
     this.shuffleTimeouts = [];
     this.lastShuffled;
+    this.duration = 0;
     // this.timer = this.initializeTimer();
     // this.listenForGame();
   }
@@ -210,7 +213,7 @@ class GameBoard extends HTMLElement {
   };
 
   // Function for ending the game (win/loose)
-  endGame = (isWin) => {
+  endGame = async (isWin) => {
     const partsElements = this.#_shadowRoot.querySelectorAll('.part');
     const winLabel = this.#_shadowRoot.querySelectorAll('.win-label')[0];
     const separator = [...this.#_shadowRoot.querySelectorAll('.separator')];
@@ -235,14 +238,29 @@ class GameBoard extends HTMLElement {
     separator.forEach((element) => element.classList.add('hidden'));
     this.parts = [];
     this.setupPlayEventlistener();
+       // save game
+       // players and duration are hardcoded for now
+       const game = await gameService.createGame({
+        size: this.size,
+        duration: this.duration,
+        player1Id: 1,
+        player2Id: 2,
+      });
+
+      scoreService.createScore({
+        size: this.size,
+        score: this.duration,
+        gameId: game.id,
+        winner: isWin ? game.player1Id : game.player2Id
+      });
   };
 
   // Function, triggered on every part movement(checks for a win on evry move)
-  winCheck = (event) => {
+  winCheck = async (event) => {
     this.movePart(event.target);
 
     if (this.checkSolution()) {
-      this.endGame(true);
+      await this.endGame(true);
     }
   };
 
