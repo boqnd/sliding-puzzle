@@ -401,32 +401,6 @@ class GameBoard extends HTMLElement {
       this.endGame(false);
     });
   }
-
-  // listenForGame() {
-  //   const mutationCallback = (mutationsList) => {
-  //       for (const mutation of mutationsList) {
-  //           if ( mutation.type !== "attributes" || mutation.attributeName !== "isready" ) {
-  //               return;
-  //           }
-  //           if (mutation.target.getAttribute("isready") === "true") {
-  //               timer.resetTimer();
-  //               timer.startTimer();
-  //           } else if (mutation.target.getAttribute("isready") === "false") {
-  //               timer.stopTimer();
-  //           }
-  //       }
-  //   }
-    
-  //   const observer = new MutationObserver(mutationCallback);
-  //   const element = document.getElementById("playerA");
-
-  //   if(!element) {
-  //       window.setTimeout(this.listenForGame, 1000);
-  //       return;
-  //   }
-
-  //   observer.observe(document.getElementById("playerA"), { attributes: true });
-  // }
 }
 
 customElements.define('game-board', GameBoard);
