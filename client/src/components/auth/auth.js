@@ -38,15 +38,15 @@ export default class LoginComponent extends HTMLElement {
             <p class="action">Sign up</p>
             <form class="sign-up" id="form-self" action="#">
                 <div class="input">
-                    <input type="email" class="input-field" name="email" placeholder=" " required />
-                    <label class="input-label" for="Email">Email</label>
+                    <input type="text" class="input-field" name="username" placeholder=" " required />
+                    <label class="input-label" for="Email">Username</label>
                 </div>
                 <div class="input">
                     <input type="password" class="input-field" name="password" placeholder=" " required />
                     <label class="input-label">Password</label>
                 </div>
                 <div class="input">
-                    <input type="password" class="input-field" name="password" placeholder=" " required />
+                    <input type="password" class="input-field" name="password-confirm" placeholder=" " required />
                     <label class="input-label">Repeat password</label>
                 </div>
                 <div class="button-wrapper">
@@ -66,6 +66,7 @@ export default class LoginComponent extends HTMLElement {
 
     connectedCallback() {
         const form = this.#_shadowRoot.querySelector('.sign-in');
+        const form_signup = this.#_shadowRoot.querySelector('.sign-up');
         const switchBtn = this.#_shadowRoot.querySelectorAll('.switch');
         const authModals = this.#_shadowRoot.querySelectorAll(".form-wrapper .modal");
 
@@ -90,6 +91,34 @@ export default class LoginComponent extends HTMLElement {
 
                 await authService.login(user);
                 
+                if (authService.isAuthenticated) {
+                    window.location.href = '/';
+                } else {
+                    error.textContent = 'Invalid email or password';
+                }
+
+            } else {
+                error.textContent = 'Please enter email and password';
+            }
+        });
+
+        form_signup.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = form_signup.username.value;
+            const password = form_signup.password.value;
+            
+            const error = form.querySelector('.error');
+            error.textContent = '';
+
+            if (username && password) {
+                const user = {
+                    username,
+                    password
+                };
+
+                await authService.register(user);
+                await authService.login(user);
+
                 if (authService.isAuthenticated) {
                     window.location.href = '/';
                 } else {
