@@ -2,7 +2,7 @@
 // service to make http requests to the server
 import { HttpService } from "./http.service.js";
 
-class GameService extends HttpService {
+class ServerGameService extends HttpService {
     constructor() {
         super();
     }
@@ -28,4 +28,4 @@ class GameService extends HttpService {
     }
 }
 
-export const gameService = new GameService();
+export const svGameService = new ServerGameService();

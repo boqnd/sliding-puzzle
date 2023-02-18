@@ -1,7 +1,7 @@
 'use strict';
 import './game-board-style.css';
 import { Timer } from '../../services/timer.service.js';
-import { gameService } from '../../services/game.service';
+import { svGameService } from '../../services/server-game.service';
 import { scoreService } from '../../services/score.service';
 
 const template = document.createElement('template');
@@ -240,7 +240,7 @@ class GameBoard extends HTMLElement {
     this.setupPlayEventlistener();
        // save game
        // players and duration are hardcoded for now
-       const game = await gameService.createGame({
+       const game = await svGameService.createGame({
         size: this.size,
         duration: this.duration,
         player1Id: 1,
