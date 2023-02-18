@@ -25,7 +25,6 @@ export default class RootComponent extends HTMLElement {
 
         this.#_shadowRoot.appendChild(template.content.cloneNode(true));
 
-        tokenService.setToken(undefined);
 
         const router = new Router();
         this.#_shadowRoot.appendChild(router);
