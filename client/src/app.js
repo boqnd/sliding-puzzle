@@ -123,32 +123,6 @@ export default class AppComponent extends HTMLElement {
     countdownElement.classList.remove('hide');
     this.timer.stopTimer();
   }
-  // listenForGame = () => {
-  //   const mutationCallback = (mutationsList) => {
-  //       for (const mutation of mutationsList) {
-  //           if ( mutation.type !== "attributes" || mutation.attributeName !== "isready" ) {
-  //               return;
-  //           }
-  //           if (mutation.target.getAttribute("isready") === "true") {
-  //               this.timer.resetTimer();
-  //               this.timer.startTimer();
-  //           } else if (mutation.target.getAttribute("isready") === "false") {
-  //               this.timer.stopTimer();
-  //           }
-  //       }
-  //   }
-    
-  //   const observer = new MutationObserver(mutationCallback);
-  //   const element = this.#_shadowRoot.getElementById("playerA");
-
-  //   if(!element) {
-  //       window.setTimeout(this.listenForGame, 1000);
-
-  //       return;
-  //   }
-
-  //   observer.observe(this.#_shadowRoot.getElementById("playerA"), { attributes: true });
-  // }
 
   sendMessageInChat = (input) => {
     if(input.value.trim() === '') {
@@ -213,7 +187,6 @@ export default class AppComponent extends HTMLElement {
   }
 
   connectedCallback() {
-    // this.listenForGame();
     this.listenForChatMessage();
   }
 

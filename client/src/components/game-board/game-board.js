@@ -99,8 +99,7 @@ class GameBoard extends HTMLElement {
     this.setAttribute('isready', true);
 
     socketService.emitMessage('gameMessage', {playOn: true});
-    // socketService.emitMessage('gameMessage', JSON.stringify(this.#_shadowRoot));
-    // console.log(this);
+
     this.#isGameStarted = true;
     gameService.append(this.#_shadowRoot);
   };
@@ -385,16 +384,6 @@ class GameBoard extends HTMLElement {
       this.shuffle();
     }
   };
-
-  // static get observedAttributes() {
-  //   return ['isready'];
-  // }
-
-  // attrbuteChangedCallback(prop, oldValue, newValue) {
-  //   if (prop === 'isready') {
-  //     console.log('Attribute changed');
-  //   }
-  // }
 
   connectedCallback() {
     this.setupPlayEventlistener();
