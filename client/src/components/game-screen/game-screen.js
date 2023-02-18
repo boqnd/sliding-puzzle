@@ -194,6 +194,10 @@ export default class GameScreenComponent extends HTMLElement {
     this.listenForChatMessage();
   }
 
+  disconnectedCallback() {
+    socketService.removeComponent(this);
+  }
+
   get isAuthenticated() {
     return authService.isAuthenticated;
   }
