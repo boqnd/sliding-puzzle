@@ -12,13 +12,13 @@ router.post('/register', async (req, res, next) => {
     const { username, password } = req.body;
 
     if (!(username && password)) {
-      res.status(400).send('All input is required');
+      next(createError(400, 'All input is required'));
     }
 
     const oldUser = await userService.findByUsername(username);
 
     if (oldUser.length) {
-      return res.status(409).send('User Already Exist. Please Login');
+      next(createError(409, 'Username already in use'));
     }
 
     const encryptedPassword = await bcrypt.hash(password, 10);
@@ -45,7 +45,7 @@ router.post('/login', async (req, res, next) => {
     const { username, password } = req.body;
 
     if (!(username && password)) {
-      res.status(400).send('All input is required');
+      next(createError(400, 'All input is required'));
     }
 
     const users = await userService.findByUsername(username);
