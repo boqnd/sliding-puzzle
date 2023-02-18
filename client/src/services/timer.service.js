@@ -77,4 +77,21 @@ export class Timer {
         this.minuetsEl.innerHTML = "00";
         this.hoursEl.innerHTML = "00";
     }
+
+
+    get getTens() {
+        return this.tens;
+    }
+
+    get getSeconds() {
+        return this.seconds;
+    }
+
+    get getMinuets() {
+        return this.minuets;
+    }
+
+    get getHours() {
+        return this.hours;
+    }
 }
