@@ -54,7 +54,7 @@ router.post('/login', async (req, res, next) => {
     if (users.length) user = users[0];
     if (user && (await bcrypt.compare(password, user.password))) {
       const token = jwt.sign(
-        { user_id: user.id, username },
+        { userId: user.id, username },
         convictConfig.get('jwt.secret'),
         {
           expiresIn: convictConfig.get('jwt.expiresIn'),

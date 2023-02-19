@@ -1,9 +1,11 @@
 'use strict';
 import './game-board-style.css';
-import { socketService } from '../../services/socket.service.js'
+import { socketService } from '../../services/socket.service.js';
 import { gameService } from '../../services/game.service.js';
 import { svGameService } from '../../services/server-game.service';
 import { scoreService } from '../../services/score.service';
+import { contextService } from '../../services/context.service';
+import { tokenService } from '../../services/token.service';
 
 const template = document.createElement('template');
 template.innerHTML = `
@@ -31,9 +33,9 @@ template.innerHTML = `
     </div>
 `;
 
-class GameBoard extends HTMLElement {
-    #_shadowRoot = null;
-    #isGameStarted = false;
+export default class GameBoard extends HTMLElement {
+  #_shadowRoot = null;
+  #isGameStarted = false;
 
   constructor() {
     super();
@@ -55,7 +57,6 @@ class GameBoard extends HTMLElement {
 
     gameService.append(this.#_shadowRoot);
     socketService.listenForWin(this.endGame);
-    this.duration = 0;
   }
 
   // Calculating the row and column of a part by it's position
@@ -101,7 +102,7 @@ class GameBoard extends HTMLElement {
     // Starting the timer
     this.setAttribute('isready', true);
 
-    socketService.emitMessage('gameMessage', {playOn: true});
+    socketService.emitMessage('gameMessage', { playOn: true });
 
     this.#isGameStarted = true;
     gameService.append(this.#_shadowRoot);
@@ -212,22 +213,38 @@ class GameBoard extends HTMLElement {
   };
 
   // Function for ending the game (win/loose)
-  endGame = async (isWin, isOur) => {
+  endGame = async (isWin, isOur, players) => {
     const partsElements = this.#_shadowRoot.querySelectorAll('.part');
     const winLabel = this.#_shadowRoot.querySelectorAll('.win-label')[0];
     const separator = [...this.#_shadowRoot.querySelectorAll('.separator')];
     const levels = this.#_shadowRoot.querySelectorAll('.level')[0];
     const playBtn = this.#_shadowRoot.querySelectorAll('.play')[0];
+    console.log(isWin, isOur, players);
     // Deciding the label based on the given parameter and doing the proper operations with the timer
     if (isWin) {
       winLabel.innerHTML = 'Win!';
       if (isOur === undefined) {
-        socketService.emitMessage('gameMessage', {isWin: false});
+        socketService.emitMessage('gameMessage', { isWin: false });
       }
+      const user = tokenService.getDecodedToken();
+
+      const game = await svGameService.createGame({
+        size: this.size,
+        duration: contextService.getContext()['time'],
+        player1Id: players[0],
+        player2Id: players[1],
+      });
+
+      scoreService.createScore({
+        size: this.size,
+        score: contextService.getContext()['time'],
+        gameId: game.id,
+        winner: user.userId,
+      });
     } else {
       winLabel.innerHTML = 'Loose!';
       if (isOur === undefined) {
-        socketService.emitMessage('gameMessage', {isWin: true});
+        socketService.emitMessage('gameMessage', { isWin: true });
       }
     }
     // Removing all parts from the board, hiding all the unnessecery elements, showing all we need and setting the event listener to the play btn again after it is visible
@@ -241,24 +258,10 @@ class GameBoard extends HTMLElement {
     this.parts = [];
     this.setupPlayEventlistener();
     if (isOur === undefined) {
-      socketService.emitMessage('gameMessage', {playOn: false});
+      socketService.emitMessage('gameMessage', { playOn: false });
     }
     gameService.clear();
-      // save game
-      // players and duration are hardcoded for now
-    const game = await svGameService.createGame({
-      size: this.size,
-      duration: this.duration,
-      player1Id: 1,
-      player2Id: 2,
-    });
-
-    scoreService.createScore({
-      size: this.size,
-      score: this.duration,
-      gameId: game.id,
-      winner: isWin ? game.player1Id : game.player2Id
-    });
+    // save game
   };
 
   // Function, triggered on every part movement(checks for a win on evry move)
@@ -296,7 +299,7 @@ class GameBoard extends HTMLElement {
     this.parts[partNumber].left = emptyLeft;
     this.parts[partNumber].position = emptyPosition;
 
-    socketService.emitMessage("gameMessage", {movedPart: true});
+    socketService.emitMessage('gameMessage', { movedPart: true });
   };
 
   // Function for checking if a part can be moved
@@ -426,4 +429,3 @@ class GameBoard extends HTMLElement {
 }
 
 customElements.define('game-board', GameBoard);
-export default GameBoard;

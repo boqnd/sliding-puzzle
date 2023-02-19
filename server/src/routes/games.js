@@ -33,6 +33,7 @@ router.get('/:id/full', isLoggedIn, async (req, res, next) => {
 
 router.post('/', isLoggedIn, async (req, res, next) => {
   try {
+    console.log(req.body);
     res.send(await gameService.create(req.body));
   } catch (err) {
     next(err);
