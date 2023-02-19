@@ -32,7 +32,7 @@ export class HttpService {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer' + this.getAuthorizationHeader(),
+        Authorization: 'Bearer ' + this.getAuthorizationHeader(),
       },
     });
   }
@@ -42,7 +42,7 @@ export class HttpService {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer' + this.getAuthorizationHeader(),
+        Authorization: 'Bearer ' + this.getAuthorizationHeader(),
       },
       body: JSON.stringify(data),
     });
@@ -53,7 +53,7 @@ export class HttpService {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer' + this.getAuthorizationHeader(),
+        Authorization: 'Bearer ' + this.getAuthorizationHeader(),
       },
       body: JSON.stringify(data),
     });
@@ -64,7 +64,7 @@ export class HttpService {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'Bearer' + this.getAuthorizationHeader(),
+        Authorization: 'Bearer ' + this.getAuthorizationHeader(),
       },
     });
   }

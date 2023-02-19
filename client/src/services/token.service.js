@@ -1,4 +1,5 @@
 import { userStorage } from "./user-storage.service";
+import jwt_decode from "jwt-decode";
 
 // The whole point of this service is to avoid circular dependencies
 class TokenService {
@@ -10,6 +11,10 @@ class TokenService {
 
   getToken() {
     return userStorage.token;
+  }
+
+  getDecodedToken() {
+    return jwt_decode(this.getToken());
   }
 }
 

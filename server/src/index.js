@@ -25,6 +25,7 @@ async function start() {
 
   const io = new Server(server, options);
   const playersReadyMap = new Map();
+  const playersMap = new Map();
 
   io.on('connection', socket => {
     clientNo++;
@@ -53,10 +54,31 @@ async function start() {
       io.to(roomNo).emit('receiveGameMessage', {
         userId: socket.id,
         playersReady: playersReadyMap.get(roomNo),
-        message: message
+        message: message,
+        players: playersMap.get(roomNo)
       });
     });
+
+    socket.on('currentUser', data => {
+      console.log(data);
+      const players = playersMap.get(data.roomNo);
+      if (players) {
+        playersMap.set(data.roomNo, [...players, data.userId]);
+      } else {
+        playersMap.set(data.roomNo, [data.userId]);
+      }
+      console.log(playersReadyMap);
+      console.log(playersMap.get(data.roomNo));
+    });
+
+    socket.on('endGame', (data) => {
+      console.log('vliza');
+      console.log(data);
+      playersReadyMap.delete(data.roomNo);
+    });
   });
+
+  
 }
 
 async function shutdown() {

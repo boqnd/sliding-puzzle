@@ -7,6 +7,8 @@ import { GameBoard } from '../game-board/game-board.js';
 import { LoginComponent } from '../auth/auth.js';
 import { HttpService } from '../../services/http.service.js';
 import { authService } from '../../services/auth.service.js';
+import { contextService } from '../../services/context.service';
+import { tokenService } from '../../services/token.service';
 
 export default class GameScreenComponent extends HTMLElement {
   #_shadowRoot = null;
@@ -126,6 +128,10 @@ export default class GameScreenComponent extends HTMLElement {
     const countdownElement = this.#_shadowRoot.querySelectorAll('.hider')[1];
     countdownElement.classList.remove('hide');
     this.timer.stopTimer();
+    contextService.setContext({
+      ...contextService.getContext(),
+      time: this.timer.serialize()
+    });
   }
 
   sendMessageInChat = (input) => {
@@ -166,7 +172,8 @@ export default class GameScreenComponent extends HTMLElement {
     
     const username = document.createElement('p');
     // TODO: Get the current user's username
-    username.innerText = 'example@gmail.com';
+    const user = tokenService.getDecodedToken()
+    username.innerText = user.username;
     username.classList.add('username');
     
     const date = document.createElement('p');
@@ -196,6 +203,7 @@ export default class GameScreenComponent extends HTMLElement {
 
   disconnectedCallback() {
     socketService.removeComponent(this);
+    socketService.endGame();
   }
 
   get isAuthenticated() {
