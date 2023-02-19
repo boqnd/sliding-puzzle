@@ -1,18 +1,70 @@
 import App from './app.js';
+import { convictConfig } from '../config.js';
+import { Server } from 'socket.io';
 
 const app = new App();
+let clientNo = 0;
+let roomNo;
 
 async function start() {
   await app.init();
-  // TODO: Get port from config
-  const port = process.env.PORT || 3000;
+  const port = convictConfig.get('server.port');
 
-  app.express.listen(port, (err) => {
+  const options = {
+    cors: true,
+    origin: [`http://localhost:${port}`]
+  };
+
+  const server = app.express.listen(port, (err) => {
     if (err) {
       return console.log(err);
     }
 
     return console.log(`Server is listening on port ${port}`);
+  });
+
+  const io = new Server(server, options);
+  const playersReadyMap = new Map();
+
+  io.on('connection', socket => {
+    clientNo++;
+    roomNo = Math.round(clientNo / 2);
+    playersReadyMap.set(roomNo, 0);
+    socket.join(roomNo);
+    socket.emit('serverMsg', {clientNo: clientNo, roomNo: roomNo, socketId: socket.id});
+    socket.emit('serverToClient', 'Hello, client!');
+    socket.on('chatMessage', message => {
+      io.to(roomNo).emit('receiveChatMessage', {
+        userId: socket.id,
+        message: message
+      });
+    });
+
+    socket.on('disconnect', socket => {
+      console.log('disconnecting');
+      clientNo--;
+      io.to(roomNo).emit('receiveGameMessage', {
+        userId: socket.id,
+        message: 'disconnected'
+      });
+    });
+
+    socket.on('gameMessage', message => {
+      if (message.playOn === true) {
+        playersReadyMap.set(roomNo, playersReadyMap.get(roomNo) + 1);
+        console.log(playersReadyMap.get(roomNo));
+      } else if (message.playOn === false) {
+        if (playersReadyMap.get(roomNo) !== 0) {
+          playersReadyMap.set(roomNo, playersReadyMap.get(roomNo) - 1);
+        }
+        console.log(playersReadyMap.get(roomNo));
+      }
+      io.to(roomNo).emit('receiveGameMessage', {
+        userId: socket.id,
+        playersReady: playersReadyMap.get(roomNo),
+        message: message
+      });
+    });
   });
 }
 

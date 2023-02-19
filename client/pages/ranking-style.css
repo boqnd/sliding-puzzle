@@ -1,0 +1,118 @@
+body{
+    font-size: 16px;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-weight: 700;
+    padding: 0;
+    margin: 0;
+    background-color: #eeeff7;
+}
+
+.heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#username {
+    font-size: 16px;
+    padding: 0;
+    margin: 0;
+}
+  
+.btn {
+position: relative;
+margin-top: 15px;
+margin-left: 15px;
+width: 150px;
+height: 30px;
+border: none;
+border-radius: 10px;
+background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(44,62,80,1) 100%);
+color: white;
+font-weight: bold;
+font-size: 16px;
+cursor: pointer;
+}
+
+.btn:hover {
+background: radial-gradient(circle, rgb(1, 39, 228) 0%, rgba(44,62,80,1) 100%);
+}
+
+.back-to-game {
+    margin-right: 15px;
+}
+
+.ranking-wrapper {
+    transform: translate(35%, 10%);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 60%;
+    color: white;
+}
+
+.wrapper {
+    border: none;
+    border-radius: 10px;
+    background: radial-gradient(circle, rgba(63,94,251,1) 0%, rgba(44,62,80,1) 100%);
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.ranking {
+    list-style-type: none;
+    overflow: hidden;
+    padding: 0;
+    margin-left: 20px;
+    margin-right: 20px;
+    display: flex;
+    flex-direction: column;
+    color: white;
+}
+
+.user-score-li{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-bottom: 1px solid white;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.labels{
+    padding-right: 35px;
+    padding-left: 35px;
+}
+
+.current-user{
+    color: white;
+    background: radial-gradient(circle, rgba(246,246,249,1) 0%, rgba(75,75,75,1) 35%, rgba(13,0,0,1) 100%);
+}
+hr{
+    border: 2px solid white;
+    background: white;
+}
+
+@media screen and (max-width: 890px) {
+    .user-score-li{
+        flex-direction: column;
+    }
+    .labels{
+        display: none;
+    }
+    .heading{
+        flex-direction: column;
+    }
+    .btn{
+        margin-left: 5px;
+    }
+    .back-to-game{
+        align-self: flex-start;
+    }
+    .signout-btn-wrapper {
+        align-self: flex-start;
+    }
+}
