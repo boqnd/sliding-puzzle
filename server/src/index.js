@@ -40,6 +40,15 @@ async function start() {
       });
     });
 
+    socket.on('disconnect', socket => {
+      console.log('disconnecting');
+      clientNo--;
+      io.to(roomNo).emit('receiveGameMessage', {
+        userId: socket.id,
+        message: 'disconnected'
+      });
+    });
+
     socket.on('gameMessage', message => {
       if (message.playOn === true) {
         playersReadyMap.set(roomNo, playersReadyMap.get(roomNo) + 1);

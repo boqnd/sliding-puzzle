@@ -7,6 +7,7 @@ import { GameBoard } from '../game-board/game-board.js';
 import { LoginComponent } from '../auth/auth.js';
 import { HttpService } from '../../services/http.service.js';
 import { authService } from '../../services/auth.service.js';
+import { tokenService } from '../../services/token.service';
 
 export default class GameScreenComponent extends HTMLElement {
   #_shadowRoot = null;
@@ -61,7 +62,27 @@ export default class GameScreenComponent extends HTMLElement {
     const hoursEl = this.#_shadowRoot.getElementById("hours");
     this.timer = new Timer(tensEl, secondsEl, minuetsEl, hoursEl);
     this.userId = -1;
+
+    const username = this.#_shadowRoot.getElementById('username');
+    username.innerHTML = `User: ${tokenService.getDecodedToken().username}`;
+
+    this.signOut();
   };
+
+  signOut = () => {
+    const signOutBtn = this.#_shadowRoot.querySelectorAll('.sign-out-btn')[0];
+    signOutBtn.addEventListener('click', () => {
+      localStorage.removeItem('token');
+      window.location.href = '/';
+    });
+  }
+
+  ranking = () => {
+    const rankingBtn = this.#_shadowRoot.querySelectorAll('ranking')[0];
+    rankingBtn.addEventListener('click', () => {
+      window.location.href = '/ranking/';
+    });
+  }
 
   emitBoard = (isOur) => {
     if (isOur && gameService.getFirst()) {
