@@ -63,8 +63,11 @@ export default class GameScreenComponent extends HTMLElement {
     this.timer = new Timer(tensEl, secondsEl, minuetsEl, hoursEl);
     this.userId = -1;
 
-    const username = this.#_shadowRoot.getElementById('username');
-    username.innerHTML = `User: ${tokenService.getDecodedToken().username}`;
+    
+    if (tokenService.getToken()) {
+      const username = this.#_shadowRoot.getElementById('username');
+      username.innerHTML = `User: ${tokenService.getDecodedToken().username}`;
+    }
 
     this.signOut();
   };
