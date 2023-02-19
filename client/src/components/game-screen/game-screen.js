@@ -157,7 +157,10 @@ export default class GameScreenComponent extends HTMLElement {
         return;
       }
     
-      socketService.emitMessage('chatMessage', input.value);
+      socketService.emitMessage('chatMessage', {
+        input: input.value, 
+        username: tokenService.getDecodedToken().username
+      });
       input.value = '';
   }
 
@@ -189,8 +192,8 @@ export default class GameScreenComponent extends HTMLElement {
     messageInfo.classList.add('messageInfo');
     
     const username = document.createElement('p');
-    // TODO: Get the current user's username
-    username.innerText = 'example@gmail.com';
+    
+    username.innerText = `${response.message.username}`;
     username.classList.add('username');
     
     const date = document.createElement('p');
@@ -201,7 +204,7 @@ export default class GameScreenComponent extends HTMLElement {
     textContainer.classList.add('textContainer');
     
     const textParagraph = document.createElement('p');
-    textParagraph.innerText = response.message;
+    textParagraph.innerText = response.message.input;
     
     messageContainer.appendChild(innerMessage);
     innerMessage.appendChild(messageInfo);
